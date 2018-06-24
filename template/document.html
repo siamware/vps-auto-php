@@ -1,0 +1,109 @@
+<div>
+      <div class="slim-pageheader">
+            <ol class="breadcrumb slim-breadcrumb">
+                  <li class="breadcrumb-item">
+                        Home
+                  </li>
+                  <li aria-current="page" class="breadcrumb-item active" v-show="id == false">วิธีใช้ & บทความ</li>
+                  <li aria-current="page" class="breadcrumb-item" v-show="id != false">
+                        <router-link to="/document">
+                              วิธีใช้ & บทความ
+                        </router-link>
+                  </li>
+                  <li aria-current="page" class="breadcrumb-item active" v-show="id != false">{{ menus[id] }}</li>
+            </ol>
+            <h6 class="slim-pagetitle">วิธีใช้ & บทความ</h6>
+      </div>
+
+      <div class="row">
+            <div class="col-lg-3">
+                  <ul class="list-group" v-for="(menu, k) in menus">
+                        <router-link :to="'/document/' + k" :class="['list-group-item', 'list-group-item-action', {'active': k == id}]">
+                              {{ menu }}
+                        </router-link>
+                  </ul>
+            </div>
+            <div class="col-lg">
+                  <div class="card" v-show="id != false">
+                        <div class="card-body" v-show="id == 1">
+                              <div class="pd-b-20">
+                                    <span>ขั้นตอนที่ 1 : เปิดหน้าต่าง Start ขึ้นมา และเปิดโปรแกรม Administrative Tools</span>
+                                    <img class="img-fluid" src="assets/img/document/set-password/step1.png">
+                              </div>
+                              <div class="pd-b-20">
+                                    <span>ขั้นตอนที่ 2 : เปิดโปรแกรม Computer Management</span>
+                                    <img class="img-fluid" src="assets/img/document/set-password/step2.png">
+                              </div>
+                              <div class="pd-b-20">
+                                    <span>ขั้นตอนที่ 3 : ไปที่แท็ป Local Users and Groups</span>
+                                    <img class="img-fluid" src="assets/img/document/set-password/step3.png">
+                              </div>
+                              <div class="pd-b-20">
+                                    <span>ขั้นตอนที่ 4 : ไปที่แท็ป Users และคลิกขวาที่ Administrator แล้วคลิกที่ Set Password....</span>
+                                    <img class="img-fluid" src="assets/img/document/set-password/step4.png">
+                              </div>
+                              <div class="pd-b-20">
+                                    <span>ขั้นตอนที่ 5 : คลิก Proceed เพื่อไปยังหน้าต่างตั้งรหัส</span>
+                                    <img class="img-fluid" src="assets/img/document/set-password/step5.png">
+                              </div>
+                              <div class="">
+                                    <span>ขั้นตอนที่ 6 : ตั้งรหัสผ่านใหม่เสร็จแล้วให้คลิก OK เป็นอันเสร็จสิ้น</span>
+                                    <img class="img-fluid" src="assets/img/document/set-password/step6.png">
+                              </div>
+                        </div>
+                        <div class="card-body" v-show="id == 2">
+                              <h3>โปรแกรมที่อยู่ในเครื่อง ได้แก่</h3>
+                              <ol>
+                                    <li>Google Chrome</li>
+                                    <li>Java 8</li>
+                                    <li>Xenserver Windows Management Agent <span class="text-danger">(ห้ามถอนการติดตั้ง)</span></li>
+                              </ol>
+                              <p class="text-danger pd-b-0">
+                                    **หมายเหตุ : เครื่องเปล่าจะไม่มีการติดตั้งโปรแกรมเข้าไป
+                              </p>
+                        </div>
+                        <div class="card-body" v-show="id == 3">
+                                    <div class="pd-b-20">
+                                          <span>ขั้นตอนที่ 1 : เปิดหน้าต่าง Start ขึ้นมา และเปิดโปรแกรม Administrative Tools</span>
+                                          <img class="img-fluid" src="assets/img/document/extend-disk/step1.png">
+                                    </div>
+                                    <div class="pd-b-20">
+                                          <span>ขั้นตอนที่ 2 : เปิดโปรแกรม Computer Management</span>
+                                          <img class="img-fluid" src="assets/img/document/extend-disk/step2.png">
+                                    </div>
+                                    <div class="pd-b-20">
+                                          <span>ขั้นตอนที่ 3 : ไปที่แท็ป Disk Management</span>
+                                          <img class="img-fluid" src="assets/img/document/extend-disk/step3.png">
+                                    </div>
+                                    <div class="pd-b-20">
+                                          <span>ขั้นตอนที่ 4 : คลิกซ้ายเลือกไดรฟ์ C</span>
+                                          <img class="img-fluid" src="assets/img/document/extend-disk/step4.png">
+                                    </div>
+                                    <div class="pd-b-20">
+                                          <span>ขั้นตอนที่ 5 : คลิกขวาที่ไดฟร์ C ตามรูปภาพ และคลิกที่ Extend Volume...</span>
+                                          <img class="img-fluid" src="assets/img/document/extend-disk/step5.png">
+                                    </div>
+                                    <div class="pd-b-20">
+                                          <span>ขั้นตอนที่ 6 : กด Next</span>
+                                          <img class="img-fluid" src="assets/img/document/extend-disk/step6.png">
+                                    </div>
+                                    <div class="pd-b-20">
+                                          <span>ขั้นตอนที่ 7 : กด Next</span>
+                                          <img class="img-fluid" src="assets/img/document/extend-disk/step7.png">
+                                    </div>
+                                    <div class="pd-b-20">
+                                          <span>ขั้นตอนที่ 8 : กด Finish</span>
+                                          <img class="img-fluid" src="assets/img/document/extend-disk/step8.png">
+                                    </div>
+                                    <div class="">
+                                          <span>ขั้นตอนที่ 9 : เสร็จสิ้น จะเห็นว่าไดฟร์ C มีขนาดเพิ่มขึ้น</span>
+                                          <img class="img-fluid" src="assets/img/document/extend-disk/step9.png">
+                                    </div>
+                              </div>
+                        <!-- card-body -->
+                  </div>
+                  <!-- card -->
+            </div>
+            <!-- col-8 -->
+      </div>
+</div>

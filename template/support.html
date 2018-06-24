@@ -1,0 +1,135 @@
+<div>
+      <div class="messages-left">
+            <div class="slim-pageheader">
+                  <h6 class="slim-pagetitle">Messages</h6>
+                  <a @click="openNew" href="#/support" class="messages-compose">
+                        <i class="icon ion-compose"></i>
+                  </a>
+            </div>
+            <!-- slim-pageheader -->
+
+            <div class="messages-list">
+                  <a v-for="room in $store.getters.ticket" href="#/support" :class="['media', {'unread': room.id == roomId || room.unread > 0}]" @click="select_room(room.id)">
+                        <!-- media-left -->
+                        <div class="media-body">
+                              <div>
+                                    <h6>หมวด: {{ room.category }}</h6>
+                                    <p>{{ room.title }}</p>
+                              </div>
+                              <div>
+                                    <span></span>
+                                    <span v-if="!room.lock" v-show="room.unread > 0">{{ room.unread }}</span>
+                                    <span v-else="room.lock">
+                                          <i class="icon ion-locked"></i>
+                                    </span>
+                              </div>
+                        </div>
+                        <!-- media-body -->
+                  </a>
+            </div>
+            <!-- messages-list -->
+      </div>
+      <!-- messages-left -->
+
+      <div class="messages-right d-none d-lg-block" v-if="!roomId">
+
+      </div>
+      <div class="messages-right d-none d-lg-block" v-else>
+            <div class="message-header">
+                  <a href="" class="message-back">
+                        <i class="fa fa-angle-left"></i>
+                  </a>
+                  <div class="media">
+                        <div class="media-body">
+                              <h6>{{ roomSelect.category }} - {{ roomSelect.title }}</h6>
+                              <p>
+                                    <span>เริ่มต้นเมื่อ {{ (new Date(roomSelect.created * 1000)).toLocaleString() }}</span>
+                                    <span v-show="roomSelect.closed != ''">ปิดเมื่อ {{ (new Date(roomSelect.closed * 1000)).toLocaleString() }}</span>
+                              </p>
+                        </div>
+                        <!-- media-body -->
+                  </div>
+                  <!-- media -->
+                  <div class="message-option">
+                        <!--<div class="d-none d-sm-flex">
+                              <a href="">
+                                    <i class="icon ion-ios-telephone-outline"></i>
+                              </a>
+                        </div>
+                        <div class="d-sm-none">
+                              <a href="">
+                                    <i class="icon ion-more"></i>
+                              </a>
+                        </div>-->
+                  </div>
+            </div>
+            <!-- message-header -->
+            <div class="message-body">
+                  <div class="media-list">
+                        <div class="media" v-for="(chats, i) in chatList">
+                              <img :src="'https://www.gravatar.com/avatar/' + chats.avatar + '?s=50'" v-show="$store.getters.user.id != chats.owner">
+                              <div :class="['media-body', {'reverse': $store.getters.user.id == chats.owner}]">
+                                    <div class="msg" v-for="(chat, j) in chats.chat">
+                                          <p>{{ chat.message }}</p>
+                                    </div>
+                              </div>
+                              <img :src="'https://www.gravatar.com/avatar/' + chats.avatar + '?s=50'" v-show="$store.getters.user.id == chats.owner">
+                        </div>
+                  </div>
+                  <!-- media-list -->
+            </div>
+            <!-- message-body -->
+            <div class="message-footer">
+                  <div class="row row-sm">
+                        <div class="col-9 col-sm-8 col-xl-9">
+                              <span v-if="roomSelect.lock">บทสนทนานี้ถูกปิดแล้ว</span>
+                              <input v-else type="text" class="form-control" placeholder="พิมพ์ข้อความ..." @keyup.enter="sendChat" v-model="text">
+                        </div>
+                        <!-- col-8 -->
+                        <div class="col-3 col-sm-4 col-xl-3 tx-right">
+                              <div class="d-none d-sm-block">
+                                    <a href="#/support" v-if="!roomSelect.lock" @click="sendChat">
+                                          <i class="icon ion-android-send"></i>
+                                    </a>
+                                    <i class="icon ion-locked" v-else></i>
+                              </div>
+                              <div class="d-sm-none">
+                                    <a href="#/support" v-if="!roomSelect.lock" @click="sendChat">
+                                          <i class="icon ion-android-send"></i>
+                                    </a>
+                                    <i class="icon ion-locked" v-else></i>
+                              </div>
+                        </div>
+                        <!-- col-4 -->
+                  </div>
+                  <!-- row -->
+            </div>
+            <!-- message-footer -->
+      </div>
+      <!-- messages-right -->
+
+      <div class="modal modal-open">
+            <div class="modal-dialog wd-400">
+                  <div class="modal-content bd-0">
+                        <div class="modal-header pd-y-20 pd-x-25">
+                              <h6 class="tx-14 mg-b-0 tx-uppercase tx-inverse tx-bold">เปิด Ticket ใหม่</h6>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                              </button>
+                        </div>
+                        <div class="modal-body pd-25">
+                              <select class="form-control select2 select-category" style="width: 100%">
+                                    <option value="ปัญหาการใช้งานเว็บไซต์">ปัญหาการใช้งานเว็บไซต์</option>
+                                    <option value="ปัญหาการใช้งาน VPS">ปัญหาการใช้งาน VPS</option>
+                                    <option value="ปัญหาการเติมเงิน/ชำระเงิน">ปัญหาการเติมเงิน/ชำระเงิน</option>
+                                    <option value="เรื่องอื่นๆ">เรื่องอื่นๆ</option>
+                              </select>
+                              <input type="text" class="form-control mg-t-20" placeholder="หัวข้อที่ต้องการติดต่อ" v-model="modal.title">
+                        </div>
+                        <div class="modal-footer">
+                              <button type="button" class="btn btn-primary" @click="openChat">เปิด Ticket</button>
+                        </div>
+                  </div>
+            </div>
+      </div>
+</div>

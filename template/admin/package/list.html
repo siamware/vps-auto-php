@@ -1,0 +1,98 @@
+<div>
+      <div v-if="$store.getters.user.admin">
+            <div class="slim-pageheader">
+                  <ol class="breadcrumb slim-breadcrumb">
+                        <li class="breadcrumb-item">
+                              Home
+                        </li>
+                        <li class="breadcrumb-item">
+                              <router-link to="/admin">Admin Panel</router-link>
+                        </li>
+                        <li aria-current="page" class="breadcrumb-item active">รายการแพ็กเกจ</li>
+                  </ol>
+                  <h6 class="slim-pagetitle">รายการแพ็กเกจ</h6>
+            </div>
+            <div class="row row-sm">
+                  <div class="col-lg" v-if="$store.getters.package === false">
+                        <div class="card">
+                              <div class="card-body">
+                                    <div class="row">
+                                          <div class="col-12">
+                                                <div class="sk-circle">
+                                                      <div class="sk-circle1 sk-child"></div>
+                                                      <div class="sk-circle2 sk-child"></div>
+                                                      <div class="sk-circle3 sk-child"></div>
+                                                      <div class="sk-circle4 sk-child"></div>
+                                                      <div class="sk-circle5 sk-child"></div>
+                                                      <div class="sk-circle6 sk-child"></div>
+                                                      <div class="sk-circle7 sk-child"></div>
+                                                      <div class="sk-circle8 sk-child"></div>
+                                                      <div class="sk-circle9 sk-child"></div>
+                                                      <div class="sk-circle10 sk-child"></div>
+                                                      <div class="sk-circle11 sk-child"></div>
+                                                      <div class="sk-circle12 sk-child"></div>
+                                                </div>
+                                          </div>
+                                    </div>
+                              </div>
+                        </div>
+                  </div>
+                  <div class="col-lg" v-else>
+                        <div class="card">
+                              <div class="card-body">
+                                    <table class="table table-bordered">
+                                          <thead>
+                                                <tr>
+                                                      <th width="10%">ลำดับ</th>
+                                                      <th>แพ็กเกจ</th>
+                                                      <th>CPU</th>
+                                                      <th>RAMs</th>
+                                                      <th>Disk</th>
+                                                      <th>ระยะเวลา</th>
+                                                      <th>ราคา</th>
+                                                      <th>VPS ({{ all_vps }})</th>
+                                                      <th></th>
+                                                </tr>
+                                          </thead>
+                                          <tbody>
+                                                <tr v-for="package in $store.getters.package">
+                                                      <td class="align-middle">
+                                                            <div class="row">
+                                                                  <div class="col-4 align-middle">
+                                                                        <button class="btn btn-sm btn-primary float-left">
+                                                                              <i class="fa fa-arrow-up"></i>
+                                                                        </button>
+                                                                  </div>
+                                                                  <div class="col-4 align-middle text-center">
+                                                                        {{ package.order }}
+                                                                  </div>
+                                                                  <div class="col-4 align-middle">
+                                                                        <button class="btn btn-sm btn-primary float-right">
+                                                                              <i class="fa fa-arrow-down"></i>
+                                                                        </button>
+                                                                  </div>
+                                                            </div>
+                                                      </td>
+                                                      <td class="align-middle">{{ package.name }}</td>
+                                                      <td class="align-middle">{{ package.cpu }} cores</td>
+                                                      <td class="align-middle">{{ package.ram }} GB</td>
+                                                      <td class="align-middle">{{ package.disk }} GB</td>
+                                                      <td class="align-middle">{{ package.time }} วัน</td>
+                                                      <td class="align-middle">{{ package.price }}฿</td>
+                                                      <td class="align-middle">{{ package.vps }}</td>
+                                                      <td>
+                                                            <button type="button" class="btn btn-sm btn-danger" @click="delete_package(package.id)" :disabled="loading">
+                                                                  <i v-if="!loading" class="fa fa-trash"></i>
+                                                                  <i v-else class="fa fa-spinner fa-spin"></i>
+                                                            </button>
+                                                      </td>
+                                                </tr>
+                                          </tbody>
+                                    </table>
+                              </div>
+                        </div>
+                  </div>
+            </div>
+      </div>
+      <error-404 v-else></error-404>
+</div>

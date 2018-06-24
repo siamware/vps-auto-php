@@ -1,0 +1,84 @@
+<div>
+      <div v-if="$store.getters.user.admin" class="">
+            <div class="slim-pageheader">
+                  <ol class="breadcrumb slim-breadcrumb">
+                        <li class="breadcrumb-item">
+                              Home
+                        </li>
+                        <li class="breadcrumb-item">
+                              <router-link to="/admin">Admin Panel</router-link>
+                        </li>
+                        <li aria-current="page" class="breadcrumb-item active">SMS Gateway</li>
+                  </ol>
+                  <h6 class="slim-pagetitle">ตั้งค่าการแจ้งเตือนผ่าน SMS</h6>
+            </div>
+
+            <div class="row row-sm">
+                  <div class="col-lg">
+                        <div class="card">
+                              <div class="card-body">
+                                    <section>
+                                          <h3>ใช้งานแจ้งเตือนผ่าน SMS</h3>
+                                          <hr>
+                                          <div class="row">
+                                                <div class="col">
+                                                      <button :class="['btn', 'btn-block', {'btn-outline-success': $store.getters.setting.sms_notification == '0'}, {'btn-success': $store.getters.setting.sms_notification == '1'}]"
+                                                            @click="enable(true)">เปิดใช้งาน</button>
+                                                </div>
+                                                <div class="col">
+                                                      <button :class="['btn', 'btn-block', {'btn-outline-danger': $store.getters.setting.sms_notification == '1'}, {'btn-danger': $store.getters.setting.sms_notification == '0'}]"
+                                                            @click="enable(false)">ไม่ใช้</button>
+                                                </div>
+                                          </div>
+                                    </section>
+                                    <hr>
+                                    <section>
+                                          <h3>ผู้ให้บริการ SMS Gateway</h3>
+                                          <hr>
+                                          <div class="row">
+                                                <div class="col">
+                                                      <button :class="['btn', 'btn-block', {'btn-outline-primary': $store.getters.setting.sms_gateway != 'thsms'}, {'btn-primary': $store.getters.setting.sms_gateway == 'thsms'}]"
+                                                            @click="gateway('thsms')">THSMS</button>
+                                                </div>
+                                                <div class="col">
+                                                      <button :class="['btn', 'btn-block', {'btn-outline-primary': $store.getters.setting.sms_gateway != 'molink'}, {'btn-primary': $store.getters.setting.sms_gateway == 'molink'}]"
+                                                            @click="gateway('molink')">MolinkSMS</button>
+                                                </div>
+                                                <div class="col">
+                                                      <button :class="['btn', 'btn-block', {'btn-outline-primary': $store.getters.setting.sms_gateway != 'thaibulk'}, {'btn-primary': $store.getters.setting.sms_gateway == 'thaibulk'}]"
+                                                            @click="gateway('thaibulk')">ThaiBulkSMS</button>
+                                                </div>
+                                          </div>
+                                    </section>
+                                    <hr>
+                                    <section>
+                                          <h3>ตั้งค่า Gateway</h3>
+                                          <hr>
+                                          <div class="form-group">
+                                                <label>Username</label>
+                                                <input class="form-control" placeholder="Username" v-model="setting.user" type="text">
+                                          </div>
+                                          <div class="form-group">
+                                                <label>Password</label>
+                                                <input class="form-control" placeholder="Password" v-model="setting.pass" type="text">
+                                          </div>
+                                          <div class="form-group">
+                                                <label>Sender</label>
+                                                <input class="form-control" placeholder="Sender" v-model="setting.sender" type="text">
+                                          </div>
+                                          <div class="row">
+                                                <div class="col-lg-4 col-md-5 col-sm-6 col-12">
+                                                      <button class="btn btn-block btn-success" @click="save_setting">บันทึก</button>
+                                                </div>
+                                          </div>
+                                    </section>
+                              </div>
+                              <!-- card-footer -->
+                        </div>
+                        <!-- card -->
+                  </div>
+                  <!-- col-8 -->
+            </div>
+      </div>
+      <error-404 v-else></error-404>
+</div>

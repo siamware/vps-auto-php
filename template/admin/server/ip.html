@@ -1,0 +1,108 @@
+<div>
+      <div v-if="$store.getters.user.admin">
+            <div class="slim-pageheader">
+                  <ol class="breadcrumb slim-breadcrumb">
+                        <li class="breadcrumb-item">
+                              Home
+                        </li>
+                        <li class="breadcrumb-item">
+                              <router-link to="/admin">Admin Panel</router-link>
+                        </li>
+                        <li class="breadcrumb-item">
+                              <router-link to="/admin/server-list">รายการเซิฟเวอร์</router-link>
+                        </li>
+                        <li class="breadcrumb-item">
+                              <router-link :to="'/admin/server-detail/' + id">รายละเอียดเซิฟเวอร์</router-link>
+                        </li>
+                        <li aria-current="page" class="breadcrumb-item active">จัดการ IP</li>
+                  </ol>
+                  <h6 class="slim-pagetitle">จัดการ IP</h6>
+            </div>
+            <div class="row row-sm">
+                  <div class="col-lg" v-if="$store.getters.host == false">
+                        <div class="card">
+                              <div class="card-body">
+                                    <div class="row">
+                                          <div class="col-12">
+                                                <div class="sk-circle">
+                                                      <div class="sk-circle1 sk-child"></div>
+                                                      <div class="sk-circle2 sk-child"></div>
+                                                      <div class="sk-circle3 sk-child"></div>
+                                                      <div class="sk-circle4 sk-child"></div>
+                                                      <div class="sk-circle5 sk-child"></div>
+                                                      <div class="sk-circle6 sk-child"></div>
+                                                      <div class="sk-circle7 sk-child"></div>
+                                                      <div class="sk-circle8 sk-child"></div>
+                                                      <div class="sk-circle9 sk-child"></div>
+                                                      <div class="sk-circle10 sk-child"></div>
+                                                      <div class="sk-circle11 sk-child"></div>
+                                                      <div class="sk-circle12 sk-child"></div>
+                                                </div>
+                                          </div>
+                                    </div>
+                              </div>
+                        </div>
+                  </div>
+                  <div class="col-lg" v-else-if="host == false">
+                        <div class="card">
+                              <div class="card-body text-center">
+                                    <h2>ไม่พบสิ่งที่คุณค้นหา</h2>
+                              </div>
+                        </div>
+                  </div>
+                  <div class="col-lg" v-else>
+                        <div class="card">
+                              <div class="card-body">
+                                    <h2 class="tx-black">
+                                          จัดการ IP : {{ host.name }} ({{ host.ip }})
+                                          <button class="btn btn-success float-right" @click="add">
+                                                <i class="fa fa-plus"></i>
+                                                เพิ่ม IP
+                                          </button>
+                                          <router-link :to="'/admin/server-detail/' + id" class="btn btn-warning float-right">
+                                                <i class="fa fa-arrow-left"></i>
+                                                ย้อนกลับ
+                                          </router-link>
+                                    </h2>
+                                    <hr>
+                                    <table class="table">
+                                          <thead>
+                                                <tr>
+                                                      <th>IP</th>
+                                                      <th>Subnetmask</th>
+                                                      <th>Gateway</th>
+                                                      <th>สถานะ</th>
+                                                      <th></th>
+                                                </tr>
+                                          </thead>
+                                          <tbody>
+                                                <tr v-for="ip in ips">
+                                                      <td class="align-middle">
+                                                            {{ ip.ip }}
+                                                      </td>
+                                                      <td class="align-middle">
+                                                            {{ ip.subnet }}
+                                                      </td>
+                                                      <td class="align-middle">
+                                                            {{ ip.gateway }}
+                                                      </td>
+                                                      <td class="align-middle">
+                                                            <span v-if="ip.useby == 0" class="tx-danger">ยังไม่ถูกใช้</span>
+                                                            <span v-else-if="ip.useby < 0" class="tx-success">ถูกใช้แล้ว</span>
+                                                            <router-link v-else-if="ip.useby > 0" :to="'/admin/server-vm/' + id + '/' + ip.useby">ถูกใช้แล้ว</router-link>
+                                                      </td>
+                                                      <td class="align-middle">
+                                                            <button class="btn btn-sm btn-danger" @click="remove(ip.id)">
+                                                                  <i class="fa fa-trash"></i>
+                                                            </button>
+                                                      </td>
+                                                </tr>
+                                          </tbody>
+                                    </table>
+                              </div>
+                        </div>
+                  </div>
+            </div>
+      </div>
+      <error-404 v-else></error-404>
+</div>

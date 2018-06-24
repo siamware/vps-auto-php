@@ -1,0 +1,231 @@
+<div>
+      <div class="slim-pageheader">
+            <ol class="breadcrumb slim-breadcrumb">
+                  <li class="breadcrumb-item">
+                        Home
+                  </li>
+                  <li class="breadcrumb-item" aria-current="page">
+                        <router-link :to="{name: 'vps-list'}">VPS</router-link>
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">
+                        สั่งซื้อ VPS
+                  </li>
+            </ol>
+            <h6 class="slim-pagetitle">สั่งซื้อ VPS</h6>
+      </div>
+
+      <div class="section-wrapper" v-if="step == 0">
+            <div>
+                  <h2 class="tx-black">
+                        เลือกแพ็กเกจ
+                        <button class="btn btn-warning float-right" @click="$router.push('/')">
+                              <i class="fa fa-arrow-left"></i>
+                              ย้อนกลับ
+                        </button>
+                  </h2>
+                  <hr>
+                  <div class="row" v-if="$store.getters.package === false && $store.getters.host === false">
+                        <div class="col-12">
+                              <div class="sk-circle">
+                                    <div class="sk-circle1 sk-child"></div>
+                                    <div class="sk-circle2 sk-child"></div>
+                                    <div class="sk-circle3 sk-child"></div>
+                                    <div class="sk-circle4 sk-child"></div>
+                                    <div class="sk-circle5 sk-child"></div>
+                                    <div class="sk-circle6 sk-child"></div>
+                                    <div class="sk-circle7 sk-child"></div>
+                                    <div class="sk-circle8 sk-child"></div>
+                                    <div class="sk-circle9 sk-child"></div>
+                                    <div class="sk-circle10 sk-child"></div>
+                                    <div class="sk-circle11 sk-child"></div>
+                                    <div class="sk-circle12 sk-child"></div>
+                              </div>
+                        </div>
+                  </div>
+                  <div class="row" v-else>
+                        <div class="col-md-4 col-sm-6 col-xs-12" v-for="package in $store.getters.package">
+                              <div class="card card-body text-center align-middle mb-3">
+                                    <h4 class="tx-primary">{{ package.name }}</h4>
+                                    <span>
+                                          CPU
+                                          <font class="tx-success">{{ package.cpu }}</font> core, RAMs
+                                          <font class="tx-success">{{ package.ram }}</font> GB, Disk
+                                          <font class="tx-success">{{ package.disk }}</font> GB
+                                    </span>
+                                    <span>
+                                          ราคา
+                                          <font class="tx-danger">{{ package.price }}</font> บาท ระยะเวลา
+                                          <font class="tx-danger">{{ package.time }}</font> วัน
+                                    </span>
+                                    <button v-if="!available_package(package)" class="btn btn-sm btn-danger mt-2" disabled>
+                                          <span v-if="package.soon == null">เครื่องไม่ว่างให้บริการ</span>
+                                          <countdown v-else :finish="package.soon" prefix="ให้บริการได้เร็วที่สุดใน"></countdown>
+                                    </button>
+                                    <button v-else-if="available_package(package) && parseFloat($store.getters.user.credit) >= parseFloat(package.price)" class="btn btn-sm btn-primary mt-2"
+                                          @click="select_package(package)">
+                                          เลือก
+                                    </button>
+                                    <button v-else-if="available_package(package) && parseFloat($store.getters.user.credit) < parseFloat(package.price)" class="btn btn-sm btn-warning mt-2"
+                                          @click="$router.push({name: 'billing'})">
+                                          เงินในบัญชีไม่เพียงพอ กรุณาเติมเงิน
+                                    </button>
+                                    <button v-else class="btn btn-sm btn-danger mt-2" disabled>
+                                          ไม่พร้อมบริการ
+                                    </button>
+                              </div>
+                        </div>
+                  </div>
+            </div>
+      </div>
+      <div class="section-wrapper" v-else-if="step == 1">
+            <h2 class="tx-black">
+                  เลือก OS
+                  <button class="btn btn-warning float-right" @click="undo">
+                        <i class="fa fa-arrow-left"></i>
+                        ย้อนกลับ
+                  </button>
+            </h2>
+            <hr>
+            <div class="row" v-if="$store.getters.package === false && $store.getters.host === false && $store.getters.template === false">
+                  <div class="col-12">
+                        <div class="sk-circle">
+                              <div class="sk-circle1 sk-child"></div>
+                              <div class="sk-circle2 sk-child"></div>
+                              <div class="sk-circle3 sk-child"></div>
+                              <div class="sk-circle4 sk-child"></div>
+                              <div class="sk-circle5 sk-child"></div>
+                              <div class="sk-circle6 sk-child"></div>
+                              <div class="sk-circle7 sk-child"></div>
+                              <div class="sk-circle8 sk-child"></div>
+                              <div class="sk-circle9 sk-child"></div>
+                              <div class="sk-circle10 sk-child"></div>
+                              <div class="sk-circle11 sk-child"></div>
+                              <div class="sk-circle12 sk-child"></div>
+                        </div>
+                  </div>
+            </div>
+            <div class="row" v-else>
+                  <div class="col-md-4 col-sm-6 col-xs-12" v-for="template in $store.getters.template">
+                        <div class="card card-body text-center align-middle mb-3">
+                              <h4 class="tx-primary">{{ template.name }}</h4>
+                              <button class="btn btn-sm btn-primary mt-2" @click="select_template(template)">
+                                    เลือก
+                              </button>
+                        </div>
+                  </div>
+            </div>
+      </div>
+      <div class="section-wrapper" v-else-if="step == 2">
+            <h2 class="tx-black">
+                  ยืนยันข้อมูล
+                  <button class="btn btn-warning float-right" @click="undo">
+                        <i class="fa fa-arrow-left"></i>
+                        ย้อนกลับ
+                  </button>
+            </h2>
+            <hr>
+            <div class="row">
+                  <div class="col-md-6">
+                        <div class="card card-body text-center">
+                              <h3>VPS Package {{ package_select.name }}</h3>
+                              <h5 class="mg-b-0">{{ template_select.name }}</h5>
+                              <hr>
+                              <div class="row">
+                                    <div class="col-xl-4 col-lg-6 col-md-12 col-sm-4">
+                                          <div class="card card-body bg-primary text-white text-center">
+                                                <h3>CPU</h3>
+                                                <h3>{{ package_select.cpu }} cores</h3>
+                                          </div>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-6 col-md-12 col-sm-4">
+                                          <div class="card card-body bg-success text-white text-center">
+                                                <h3>RAMs</h3>
+                                                <h3>{{ package_select.ram }} GB</h3>
+                                          </div>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-12 col-md-12 col-sm-4">
+                                          <div class="card card-body bg-danger text-white text-center">
+                                                <h3>Disk</h3>
+                                                <h3>{{ package_select.disk }} GB</h3>
+                                          </div>
+                                    </div>
+                              </div>
+                        </div>
+                  </div>
+                  <div class="col-md-6 mg-md-t-0 mg-t-10">
+                        <div>
+                              <h3>สรุปสเปค</h3>
+                              <p>
+                                    CPU : {{ package_select.cpu }} cores
+                                    <br>RAMs : {{ package_select.ram }} GB
+                                    <br>พื้นที่ใช้งาน : {{ package_select.disk }} GB
+                                    <br>OS :
+                                    <font class="tx-danger">{{ template_select.name }}</font>
+                                    <br>จำนวนวันใช้งาน :
+                                    <font class="tx-success">{{ package_select.time }} วัน</font>
+                                    <br>ราคาต่อหน่วย :
+                                    <font class="tx-success">{{ package_select.price }} บาท</font>
+                              </p>
+                        </div>
+                        <hr>
+                        <div v-if="$store.getters.user.admin">
+                              <h3>โค้ดส่วนลด</h3>
+                              <div class="form-group">
+                                    <div class="input-group">
+                                          <input type="text" class="form-control" placeholder="ABCDE-FGHIJ-..." v-model="promo_code">
+                                          <div class="input-group-append">
+                                                <button class="btn btn-oblong btn-outline-secondary" type="button" @click="check_promo">ใช้งาน Code</button>
+                                          </div>
+                                    </div>
+                              </div>
+                              <hr>
+                              <div v-if="promotion !== false && promotion.type == 'percent'">
+                                    <span class="text-danger">ส่วนลด : {{ promotion.amount }}%</span>
+                                    <br>
+                                    <span class="text-success">ราคาที่ต้องจ่าย : {{ (package_select.price * (1 - (promotion.amount / 100))).toFixed(2)
+                                          }} บาท</span>
+                                    <hr>
+                              </div>
+                              <div v-if="promotion !== false && promotion.type == 'amount'">
+                                    <span class="text-danger">ส่วนลด {{ promotion.amount }} บาท</span>
+                                    <br>
+                                    <span class="text-success">ราคาที่ต้องจ่าย : {{ (package_select.price - promotion.amount).toFixed(2) }} บาท</span>
+                                    <hr>
+                              </div>
+                        </div>
+                        <button v-if="parseFloat($store.getters.user.credit) >= parseFloat(package_select.price)" class="btn btn-primary btn-block"
+                              @click="create">
+                              <i class="fa fa-shopping-cart"></i>
+                              สั่งซื้อ ({{ price }} บาท)
+                        </button>
+                        <button v-else class="btn btn-danger btn-block" @click="$router.push({name: 'billing'})">
+                              คุณมียอดเงินในบัญชีไม่เพียงพอ กรุณาเติมเงิน
+                        </button>
+                  </div>
+            </div>
+      </div>
+      <div class="section-wrapper" v-else-if="step == 3 || step == 4 || step == 5">
+            <div class="row">
+                  <div class="col-12 text-center">
+                        <dot-loading text="กำลังติดตั้ง VPS" v-show="step == 3"></dot-loading>
+                        <dot-loading text="กำลังเปิดเครื่อง VPS" v-show="step == 4"></dot-loading>
+                        <dot-loading text="กำลังตั้งค่า IP" v-show="step == 5"></dot-loading>
+                        <div class="sk-circle">
+                              <div class="sk-circle1 sk-child"></div>
+                              <div class="sk-circle2 sk-child"></div>
+                              <div class="sk-circle3 sk-child"></div>
+                              <div class="sk-circle4 sk-child"></div>
+                              <div class="sk-circle5 sk-child"></div>
+                              <div class="sk-circle6 sk-child"></div>
+                              <div class="sk-circle7 sk-child"></div>
+                              <div class="sk-circle8 sk-child"></div>
+                              <div class="sk-circle9 sk-child"></div>
+                              <div class="sk-circle10 sk-child"></div>
+                              <div class="sk-circle11 sk-child"></div>
+                              <div class="sk-circle12 sk-child"></div>
+                        </div>
+                        <div class="text-danger text-center">ห้ามปิดหน้าต่างนี้จนกว่าจะดำเนินการเสร็จสิ้น ขั้นตอนนี้อาจใช้เวลา 1-5 นาที</div>
+                  </div>
+            </div>
+      </div>
+</div>

@@ -1,0 +1,229 @@
+<div>
+      <div class="slim-pageheader">
+            <ol class="breadcrumb slim-breadcrumb">
+                  <li class="breadcrumb-item">
+                        Home
+                  </li>
+                  <li aria-current="page" class="breadcrumb-item active">ตั้งค่า</li>
+            </ol>
+            <h6 class="slim-pagetitle">ตั้งค่า</h6>
+      </div>
+
+      <div class="row row-sm">
+            <div class="col-lg-8">
+                  <div class="card card-profile">
+                        <div class="card-body">
+                              <div class="media">
+                                    <img :src="'https://www.gravatar.com/avatar/' + $store.getters.user.avatar + '?s=300'" />
+                                    <div class="media-body">
+                                          <h3 class="card-profile-name">{{ $store.getters.user.name }}</h3>
+                                          <p class="card-profile-position">{{ $store.getters.user.email }}</p>
+
+                                          <p class="mg-b-0">
+                                                {{ $store.getters.user.company }}
+                                                <br> {{ $store.getters.user.address }}
+                                                <br> {{ $store.getters.user.phone }}
+                                          </p>
+                                    </div>
+                                    <!-- media-body -->
+                              </div>
+                              <!-- media -->
+                        </div>
+                        <!-- card-body -->
+                        <div class="card-footer">
+                              <div>
+                                    <a href="#/setting" @click="openEdit">แก้ไขประวัติ</a>
+                              </div>
+                        </div>
+                        <!-- card-footer -->
+                  </div>
+                  <!-- card -->
+
+                  <div class="card mg-t-20">
+                        <div class="card-body">
+                              <h3 class="card-profile-name">เปลี่ยนรหัสผ่าน</h3>
+                              <div :class="['form-group']">
+                                    <input type="password" :class="['form-control', {'is-invalid': form.changepass.old == ''}]" placeholder="รหัสผ่านเก่า" v-model="form.changepass.old">
+                              </div>
+                              <div :class="['form-group']">
+                                    <input type="password" :class="['form-control', {'is-invalid': form.changepass.new == ''}]" placeholder="รหัสผ่านใหม่" v-model="form.changepass.new">
+                              </div>
+                              <div :class="['form-group']">
+                                    <input type="password" :class="['form-control', {'is-invalid': form.changepass.confirm == '' || form.changepass.new != form.changepass.confirm}]"
+                                          placeholder="ยืนยันรหัสผ่านใหม่" v-model="form.changepass.confirm">
+                              </div>
+                              <div class="form-group mg-b-0">
+                                    <button class="btn btn-success" @click="changePassword" :disabled="form.changepass.old == '' || form.changepass.new == '' || form.changepass.confirm == '' || form.changepass.new != form.changepass.confirm">
+                                          เปลี่ยนรหัสผ่าน
+                                    </button>
+                              </div>
+                        </div>
+                        <!-- card-body -->
+                  </div>
+                  <!-- card -->
+
+                  <div class="card mg-t-20">
+                        <div class="card-body">
+                              <h3 class="card-profile-name">เชิญชวนเพื่อนมาใช้งาน</h3>
+                              <p>
+                                    หาเงินได้ง่ายๆ ด้วยการส่งโค้ดเชิญชวนให้ใช้งาน
+                                    <br>
+                                    <br>เงื่อนไขในการได้รับเงิน
+                                    <ol>
+                                          <li>จะได้รับเงินก็ต่อเมื่อผู้ใช้งานได้กรอกโค้ดเชิญชวนในช่องส่วนลดและจ่ายเงินเท่านั้น</li>
+                                          <li>คุณจะได้รับส่วนแบ่งจำนวน
+                                                <u class="text-danger">{{ $store.getters.setting.refer_share }}% ของเงินที่ผู้ใช้จ่าย</u>
+                                          </li>
+                                          <li>หากต้องการถอนเงินออกจากระบบ ให้ทำการติดต่อได้ที่
+                                                <a href="https://fb.com/phuminstudiocoding" target="_blank">เพจ Phumin Studio</a>
+                                          </li>
+                                          <li>ผู้ใช้ต้องยืนยันตัวตน (ยืนยัน Email และ เบอร์โทรศัพท์)</li>
+                                          <li>ผู้ใช้ต้องกรอกข้อมูลส่วนตัวให้ครบตามความเป็นจริง</li>
+                                    </ol>
+                              </p>
+                              <hr>
+                              <div class="form-group" v-if="$store.getters.user.verify_email && $store.getters.user.verify_phone">
+                                    <label>โค้ดเชิญชวน (โค้ดส่วนลด)</label>
+                                    <div class="input-group">
+                                          <input type="text" id="refer_code" class="form-control" readonly :value="$store.getters.user.refer_code">
+                                          <div class="input-group-append">
+                                                <button class="btn btn-teal" @click="copyRefer">
+                                                      <i class="fa fa-clipboard"></i>
+                                                      คัดลอก!
+                                                </button>
+                                          </div>
+                                    </div>
+                              </div>
+                              <div class="row tx-center" v-else>
+                                    <div class="col">
+                                          <div v-if="$store.getters.user.verify_email">
+                                                <span class="text-success">
+                                                      <i class="fa fa-check"></i>
+                                                      <i class="fa fa-envelope"></i>
+                                                      ยืนยัน Email แล้ว
+                                                </span>
+                                          </div>
+                                          <div v-else>
+                                                <span class="text-danger">
+                                                      <i class="fa fa-remove"></i>
+                                                      <i class="fa fa-envelope"></i>
+                                                      ยังไม่ได้ยืนยัน Email
+                                                </span>
+                                          </div>
+                                    </div>
+                                    <div class="col">
+                                          <div v-if="$store.getters.user.verify_phone">
+                                                <span class="text-success">
+                                                      <i class="fa fa-check"></i>
+                                                      <i class="fa fa-phone"></i>
+                                                      ยืนยันเบอร์โทรศัพท์แล้ว
+                                                </span>
+                                          </div>
+                                          <div v-else>
+                                                <span class="text-danger">
+                                                      <i class="fa fa-remove"></i>
+                                                      <i class="fa fa-phone"></i>
+                                                      ยังไม่ได้ยืนยันเบอร์โทรศัพท์
+                                                </span>
+                                          </div>
+                                    </div>
+                              </div>
+                        </div>
+                        <!-- card-body -->
+                  </div>
+                  <!-- card -->
+            </div>
+            <!-- col-8 -->
+
+            <div class="col-lg-4 mg-t-20 mg-lg-t-0">
+                  <div class="card card-connection">
+                        <div class="row row-xs" v-if="$store.getters.user.verify_email">
+                              <div class="col-4 tx-success">
+                                    <i class="fa fa-check"></i>
+                              </div>
+                              <div class="col-8">
+                                    <span class="text-success">
+                                          <i class="fa fa-envelope"></i>
+                                          ยืนยัน Email แล้ว
+                                    </span>
+                              </div>
+                        </div>
+                        <div class="row row-xs" v-else>
+                              <div class="col-4 tx-danger">
+                                    <i class="fa fa-remove"></i>
+                              </div>
+                              <div class="col-8">
+                                    <span class="text-danger">
+                                          <i class="fa fa-envelope"></i>
+                                          ยังไม่ได้ยืนยัน Email
+                                    </span>
+                                    <br>
+                                    <button type="button" class="btn btn-primary btn-sm" @click="confirmEmail">ยืนยัน Email</button>
+                              </div>
+                        </div>
+                        <!-- row -->
+                        <div>
+                              <hr>
+                              <div class="row row-xs" v-if="$store.getters.user.verify_phone">
+                                    <div class="col-4 tx-success">
+                                          <i class="fa fa-check"></i>
+                                    </div>
+                                    <div class="col-8">
+                                          <span class="text-success">
+                                                <i class="fa fa-phone"></i>
+                                                ยืนยันเบอร์โทรศัพท์แล้ว
+                                          </span>
+                                    </div>
+                              </div>
+                              <div class="row row-xs" v-else>
+                                    <div class="col-4 tx-danger">
+                                          <i class="fa fa-remove"></i>
+                                    </div>
+                                    <div class="col-8">
+                                          <span class="text-danger">
+                                                <i class="fa fa-phone"></i>
+                                                ยังไม่ได้ยืนยันเบอร์โทรศัพท์
+                                          </span>
+                                          <br>
+                                          <button type="button" class="btn btn-primary btn-sm" @click="confirmPhone">ยืนยันเบอร์โทรศัพท์</button>
+                                    </div>
+                              </div>
+                        </div>
+                        <!-- row -->
+                  </div>
+                  <!-- card -->
+            </div>
+            <!-- col-4 -->
+      </div>
+
+      <div class="modal fade modal-setting" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
+                        <div class="modal-header pd-x-20">
+                              <h4 class="wd-450 tx-inverse tx-bold">แก้ไขข้อมูลส่วนตัว</h4>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                              </button>
+                        </div>
+                        <div class="modal-body tx-center pd-x-30 pd-y-10">
+                              <div class="form-group mg-b-5">
+                                    <input type="text" class="form-control" placeholder="ชื่อ - นามสกุล" v-model="form.profile.name">
+                              </div>
+                              <div class="form-group mg-b-5">
+                                    <input type="text" class="form-control" placeholder="บริษัท" v-model="form.profile.company">
+                              </div>
+                              <div class="form-group mg-b-5">
+                                    <input type="text" class="form-control" placeholder="ที่อยู่" v-model="form.profile.address">
+                              </div>
+                              <div class="form-group mg-b-20">
+                                    <input type="text" class="form-control" placeholder="หมายเลขโทรศัพท์" v-model="form.profile.phone" :disabled="$store.getters.user.verify_phone">
+                              </div>
+
+                              <button class="btn btn-success btn-block mg-b-10" @click="saveProfile">บันทึก</button>
+                        </div>
+                        <!-- modal-body -->
+                  </div>
+                  <!-- modal-content -->
+            </div>
+      </div>
+</div>

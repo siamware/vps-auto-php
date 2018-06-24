@@ -1,0 +1,122 @@
+<div>
+      <div v-if="$store.getters.user.admin">
+            <div class="slim-pageheader">
+                  <ol class="breadcrumb slim-breadcrumb">
+                        <li class="breadcrumb-item">
+                              Home
+                        </li>
+                        <li class="breadcrumb-item">
+                              <router-link to="/admin">Admin Panel</router-link>
+                        </li>
+                        <li class="breadcrumb-item">
+                              <router-link to="/admin/server-list">รายการเซิฟเวอร์</router-link>
+                        </li>
+                        <li class="breadcrumb-item">
+                              <router-link :to="'/admin/server-detail/' + id">รายละเอียดเซิฟเวอร์</router-link>
+                        </li>
+                        <li aria-current="page" class="breadcrumb-item active">จัดการ VPS</li>
+                  </ol>
+                  <h6 class="slim-pagetitle">จัดการ VPS</h6>
+            </div>
+            <div class="row row-sm">
+                  <div class="col-lg" v-if="$store.getters.host == false">
+                        <div class="card">
+                              <div class="card-body">
+                                    <div class="row">
+                                          <div class="col-12">
+                                                <div class="sk-circle">
+                                                      <div class="sk-circle1 sk-child"></div>
+                                                      <div class="sk-circle2 sk-child"></div>
+                                                      <div class="sk-circle3 sk-child"></div>
+                                                      <div class="sk-circle4 sk-child"></div>
+                                                      <div class="sk-circle5 sk-child"></div>
+                                                      <div class="sk-circle6 sk-child"></div>
+                                                      <div class="sk-circle7 sk-child"></div>
+                                                      <div class="sk-circle8 sk-child"></div>
+                                                      <div class="sk-circle9 sk-child"></div>
+                                                      <div class="sk-circle10 sk-child"></div>
+                                                      <div class="sk-circle11 sk-child"></div>
+                                                      <div class="sk-circle12 sk-child"></div>
+                                                </div>
+                                          </div>
+                                    </div>
+                              </div>
+                        </div>
+                  </div>
+                  <div class="col-lg" v-else-if="vms == false">
+                        <div class="card">
+                              <div class="card-body text-center">
+                                    <h2>ไม่พบสิ่งที่คุณค้นหา</h2>
+                              </div>
+                        </div>
+                  </div>
+                  <div class="col-lg" v-else>
+                        <div class="card">
+                              <div class="card-body">
+                                    <h2 class="tx-black">
+                                          จัดการ VPS : {{ host.name }} ({{ host.ip }})
+                                          <router-link :to="'/admin/server-detail/' + id" class="btn btn-warning float-right">
+                                                <i class="fa fa-arrow-left"></i>
+                                                ย้อนกลับ
+                                          </router-link>
+                                    </h2>
+                                    <hr>
+                                    <table class="table">
+                                          <thead>
+                                                <tr>
+                                                      <th>VPS ({{ vms.length }})</th>
+                                                      <th>วันหมดอายุ</th>
+                                                      <th>เจ้าของ</th>
+                                                      <th>ตัวเลือก</th>
+                                                </tr>
+                                          </thead>
+                                          <tbody>
+                                                <tr v-for="v in vms">
+                                                      <td :class="[{'text-danger': v.status == 1}]">
+                                                            <span>(ID : {{ v.id }}) {{ v.name }}</span>
+                                                            <br>
+                                                            <small>
+                                                                  Package: {{ v.package.name }}
+                                                                  (CPU: {{ v.package.cpu }} - 
+                                                                  RAMs: {{ v.package.ram }} - 
+                                                                  Disk: {{ v.package.disk }})
+                                                            </small>
+                                                      </td>
+                                                      <td class="align-middle">
+                                                            <div v-show="v.status != 1">
+                                                                  <countdown :finish="v.expire" prefix="หมดอายุใน"></countdown>
+                                                                  <br>
+                                                                  <small>({{ date_format(v.expire) }})</small>
+                                                            </div>
+                                                            <div class="text-danger" v-show="v.status == 1">
+                                                                  <countdown :finish="v.delete" prefix="ลบข้อมูลใน"></countdown>
+                                                                  <br>
+                                                                  <small>({{ date_format(v.delete) }})</small>
+                                                            </div>
+                                                      </td>
+                                                      <td class="align-middle">
+                                                            (ID : {{ v.owner.id }}) {{ v.owner.name }}
+                                                            <br>
+                                                            <small>
+                                                                  <i :class="['fa' ,'fa-envelope', {'text-success': v.owner.verify_email}, {'text-danger': !v.owner.verify_email}]"></i>
+                                                                  {{ v.owner.email }}
+                                                                  &nbsp;&nbsp;
+                                                                  <i :class="['fa', 'fa-phone', {'text-success': v.owner.verify_phone}, {'text-danger': !v.owner.verify_phone}]"></i>
+                                                                  {{ v.owner.phone }}
+                                                            </small>
+                                                      </td>
+                                                      <td class="align-middle">
+                                                            <button class="btn btn-sm btn-danger" @click="remove(v.id)">
+                                                                  <i class="fa fa-trash"></i>
+                                                            </button>
+                                                      </td>
+                                                </tr>
+                                          </tbody>
+                                    </table>
+                              </div>
+                        </div>
+                  </div>
+            </div>
+      </div>
+      <error-404 v-else></error-404>
+</div>

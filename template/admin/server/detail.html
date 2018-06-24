@@ -1,0 +1,98 @@
+<div>
+      <div v-if="$store.getters.user.admin">
+            <div class="slim-pageheader">
+                  <ol class="breadcrumb slim-breadcrumb">
+                        <li class="breadcrumb-item">
+                              Home
+                        </li>
+                        <li class="breadcrumb-item">
+                              <router-link to="/admin">Admin Panel</router-link>
+                        </li>
+                        <li class="breadcrumb-item">
+                              <router-link to="/admin/server-list">รายการเซิฟเวอร์</router-link>
+                        </li>
+                        <li aria-current="page" class="breadcrumb-item active">รายละเอียดเซิฟเวอร์</li>
+                  </ol>
+                  <h6 class="slim-pagetitle">รายละเอียดเซิฟเวอร์</h6>
+            </div>
+            <div class="row row-sm">
+                  <div class="col-lg" v-if="$store.getters.host == false">
+                        <div class="card">
+                              <div class="card-body">
+                                    <div class="row">
+                                          <div class="col-12">
+                                                <div class="sk-circle">
+                                                      <div class="sk-circle1 sk-child"></div>
+                                                      <div class="sk-circle2 sk-child"></div>
+                                                      <div class="sk-circle3 sk-child"></div>
+                                                      <div class="sk-circle4 sk-child"></div>
+                                                      <div class="sk-circle5 sk-child"></div>
+                                                      <div class="sk-circle6 sk-child"></div>
+                                                      <div class="sk-circle7 sk-child"></div>
+                                                      <div class="sk-circle8 sk-child"></div>
+                                                      <div class="sk-circle9 sk-child"></div>
+                                                      <div class="sk-circle10 sk-child"></div>
+                                                      <div class="sk-circle11 sk-child"></div>
+                                                      <div class="sk-circle12 sk-child"></div>
+                                                </div>
+                                          </div>
+                                    </div>
+                              </div>
+                        </div>
+                  </div>
+                  <div class="col-lg" v-else>
+                        <div class="card">
+                              <div class="card-body">
+                                    <h2 class="tx-black">
+                                          รายละเอียดเซิฟเวอร์
+                                          <router-link to="/admin/server-list" class="btn btn-warning float-right">
+                                                <i class="fa fa-arrow-left"></i>
+                                                ย้อนกลับ
+                                          </router-link>
+                                    </h2>
+                                    <hr>
+                                    <div class="row">
+                                          <div class="col-md-6">
+                                                <table class="table">
+                                                      <tr>
+                                                            <td>ชื่อเครื่อง</td>
+                                                            <td>{{ host.label }}</td>
+                                                      </tr>
+                                                      <tr>
+                                                            <td>Hypervisor</td>
+                                                            <td>{{ host.type == 'a' ? 'Xenserver' : 'ไม่ทราบ' }}</td>
+                                                      </tr>
+                                                      <tr>
+                                                            <td>IP</td>
+                                                            <td>{{ host.ip }}</td>
+                                                      </tr>
+                                                      <tr>
+                                                            <td>CPU</td>
+                                                            <td>{{ host.cpu }} cores</td>
+                                                      </tr>
+                                                      <tr>
+                                                            <td>แรมทั้งหมด</td>
+                                                            <td>{{ ram_format(host.ram_total) }} GB</td>
+                                                      </tr>
+                                                      <tr>
+                                                            <td>แรมที่ว่าง</td>
+                                                            <td>{{ ram_format(host.ram_free) }} GB</td>
+                                                      </tr>
+                                                      <tr>
+                                                            <td>เช็คครั้งสุดท้าย</td>
+                                                            <td>{{ date_format(host.last_check) }}</td>
+                                                      </tr>
+                                                </table>
+                                          </div>
+                                          <div class="col-md-6">
+                                                <router-link :to="'/admin/server-ip/' + id" class="btn btn-block btn-primary">จัดการ IP</router-link>
+                                                <router-link :to="'/admin/server-vm/' + id" class="btn btn-block btn-success">จัดการ VPS</router-link>
+                                          </div>
+                                    </div>
+                              </div>
+                        </div>
+                  </div>
+            </div>
+      </div>
+      <error-404 v-else></error-404>
+</div>

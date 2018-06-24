@@ -1,0 +1,103 @@
+<div>
+      <div v-if="$store.getters.user.admin" class="">
+            <div class="slim-pageheader">
+                  <ol class="breadcrumb slim-breadcrumb">
+                        <li class="breadcrumb-item">
+                              Home
+                        </li>
+                        <li class="breadcrumb-item">
+                              <router-link to="/admin">Admin Panel</router-link>
+                        </li>
+                        <li aria-current="page" class="breadcrumb-item active">License และ Update (อัพเดท)</li>
+                  </ol>
+                  <h6 class="slim-pagetitle">License และ Update (อัพเดท)</h6>
+            </div>
+
+            <div class="row row-sm">
+                  <div class="col-lg">
+                        <div class="card">
+                              <div class="card-body">
+                                    <div class="row" v-if="$store.getters.license === false">
+                                          <div class="col-12">
+                                                <div class="sk-circle">
+                                                      <div class="sk-circle1 sk-child"></div>
+                                                      <div class="sk-circle2 sk-child"></div>
+                                                      <div class="sk-circle3 sk-child"></div>
+                                                      <div class="sk-circle4 sk-child"></div>
+                                                      <div class="sk-circle5 sk-child"></div>
+                                                      <div class="sk-circle6 sk-child"></div>
+                                                      <div class="sk-circle7 sk-child"></div>
+                                                      <div class="sk-circle8 sk-child"></div>
+                                                      <div class="sk-circle9 sk-child"></div>
+                                                      <div class="sk-circle10 sk-child"></div>
+                                                      <div class="sk-circle11 sk-child"></div>
+                                                      <div class="sk-circle12 sk-child"></div>
+                                                </div>
+                                          </div>
+                                    </div>
+                                    <table class="table" v-if="typeof $store.getters.license == 'object'">
+                                          <tr>
+                                                <td>License Key</td>
+                                                <td>{{ $store.getters.license.name }}</td>
+                                          </tr>
+                                          <tr>
+                                                <td>ชื่อ License</td>
+                                                <td>{{ $store.getters.license.name }}</td>
+                                          </tr>
+                                          <tr>
+                                                <td>License Type</td>
+                                                <td>{{ $store.getters.license.type }}</td>
+                                          </tr>
+                                          <tr>
+                                                <td>ข้อจำกัด</td>
+                                                <td>
+                                                      <ul>
+                                                            <li v-for="(v, k) in $store.getters.license.limit" :key="k" v-show="usage_visible(k)">{{ usage_label(k) }} :
+                                                                  <span v-html="usage_format(k, v)"></span>
+                                                            </li>
+                                                      </ul>
+                                                </td>
+                                          </tr>
+                                          <tr>
+                                                <td>การใช้งานปัจจุบัน</td>
+                                                <td>
+                                                      <ul>
+                                                            <li v-for="(v, k) in $store.getters.license.use" :key="k" v-show="usage_visible(k)">{{ usage_label(k) }} :
+                                                                  <span v-html="usage_format_limit(k, v, $store.getters.license.limit[k])"></span>
+                                                            </li>
+                                                      </ul>
+                                                </td>
+                                          </tr>
+                                          <tr>
+                                                <td>เครื่องที่ใช้งาน</td>
+                                                <td>
+                                                      <ul>
+                                                            <li v-for="(v, i) in $store.getters.license.active_list" :key="i">{{ v }}</li>
+                                                      </ul>
+                                                </td>
+                                          </tr>
+                                          <tr>
+                                                <td>เริ่มใช้งานตั้งแต่</td>
+                                                <td>{{ date_format($store.getters.license.first_use) }}</td>
+                                          </tr>
+                                          <tr>
+                                                <td>สิ้นสุดการใช้งาน</td>
+                                                <td>{{ date_format($store.getters.license.expire) }}</td>
+                                          </tr>
+                                          <tr>
+                                                <td>เวลาการใช้งานที่เหลือ</td>
+                                                <td>
+                                                      <countdown :finish="$store.getters.license.expire"></countdown>
+                                                </td>
+                                          </tr>
+                                    </table>
+                              </div>
+                              <!-- card-footer -->
+                        </div>
+                        <!-- card -->
+                  </div>
+                  <!-- col-8 -->
+            </div>
+      </div>
+      <error-404 v-else></error-404>
+</div>

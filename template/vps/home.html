@@ -1,0 +1,92 @@
+<div>
+      <div class="slim-pageheader">
+            <ol class="breadcrumb slim-breadcrumb">
+                  <li class="breadcrumb-item">
+                        Home
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">VPS </li>
+            </ol>
+            <h6 class="slim-pagetitle">VPS ทั้งหมด</h6>
+      </div>
+
+      <div class="section-wrapper">
+            <div class="clearfix align-middle">
+                  <label class="section-title float-left">VPS ทั้งหมด</label>
+                  <router-link :to="{ name: 'vps-add' }" class="btn btn-success btn-sm float-right">
+                        <i class="fa fa-plus"></i>
+                        สั้งซื้อ VPS
+                  </router-link>
+            </div>
+            <div class="table-responsive">
+                  <table class="table mg-b-0">
+                        <thead>
+                              <tr>
+                                    <th>VPS</th>
+                                    <th>หมดอายุ</th>
+                                    <th>ตัวเลือก</th>
+                              </tr>
+                        </thead>
+                        <tbody>
+                              <tr v-for="vps in $store.getters.vps">
+                                    <td>
+                                          <div :class="[{'text-danger': vps.status == 1}]">
+                                                <span>{{ vps.name }}</span>
+                                                <br>
+                                                <small>
+                                                      Package: {{ vps.package.name }} (CPU: {{ vps.package.cpu }} - RAMs: {{ vps.package.ram }} - Disk: {{ vps.package.disk }})
+                                                </small>
+                                          </div>
+                                    </td>
+                                    <td>
+                                          <div v-show="vps.status != 1">
+                                                <countdown :finish="vps.expire" prefix="หมดอายุใน"></countdown>
+                                                <br>
+                                                <small>({{ date_format(vps.expire) }})</small>
+                                          </div>
+                                          <div class="text-danger" v-show="vps.status == 1">
+                                                <countdown :finish="vps.delete" prefix="ลบข้อมูลใน"></countdown>
+                                                <br>
+                                                <small>({{ date_format(vps.delete) }})</small>
+                                          </div>
+                                    </td>
+                                    <td>
+                                          <div class="btn-group" v-if="vps.status == 0">
+                                                <button type="button" title="เปิดเครื่อง (Start)" class="btn btn-sm btn-success title active" :disabled="operation[vps.id] == true || vps.state != 'halted'"
+                                                      v-show="vps.state == 'halted'" @click="start(vps)">
+                                                      <i class="fa fa-play"></i>
+                                                </button>
+                                                <button type="button" title="รีสตาร์ด (Shutdown)" class="btn btn-sm btn-warning title" :disabled="operation[vps.id] == true || vps.state != 'running'"
+                                                      v-show="vps.state == 'running' && false" @click="restart(vps)">
+                                                      <i class="fa fa-refresh"></i>
+                                                </button>
+                                                <button type="button" title="ปิดเครื่อง (Shutdown)" class="btn btn-sm btn-danger title" :disabled="operation[vps.id] == true || vps.state != 'running'"
+                                                      v-show="vps.state == 'running'" @click="stop(vps)">
+                                                      <i class="fa fa-power-off"></i>
+                                                </button>
+                                                <button type="button" title="ปิดเครื่อง (Force Shutdown)" class="btn btn-sm btn-danger title" :disabled="operation[vps.id] == true || vps.state != 'running'"
+                                                      v-show="vps.state == 'running' && false" @click="forcestop(vps)">
+                                                      <i class="fa fa-stop"></i>
+                                                </button>
+                                          </div>
+                                          <span class="text-center" v-else-if="vps.status == 99">
+                                                กำลังสร้าง VPS...
+                                          </span>
+                                          <span class="text-center" v-else-if="vps.status == 98">
+                                                กำลังตั้งค่า IP...
+                                          </span>
+                                          <span class="text-center text-danger" v-else>
+                                                VPS ถูกระงับ
+                                          </span>
+
+                                          <button type="button" title="รายละเอียด" class="btn btn-sm btn-warning title" @click="detail(vps)">
+                                                รายละเอียด
+                                          </button>
+
+                                    </td>
+                              </tr>
+                        </tbody>
+                  </table>
+            </div>
+            <!-- table-responsive -->
+      </div>
+</div>

@@ -1,0 +1,445 @@
+<div>
+    <div class="" v-if="!$store.state.user.islogin">
+        <!-- Register page -->
+        <div class="d-md-flex flex-row-reverse" v-if="$route.path.indexOf('register') > -1">
+            <div class="signin-right">
+                <div class="signin-box signup">
+                    <h3 class="signin-title-primary">สมัครสมาชิกใหม่</h3>
+                    <h5 class="signin-title-secondary lh-4">เพียงแค่กรอกข้อมูล และกดปุ่มสมัครสมาชิกก็สามารถใช้งานได้ทันที</h5>
+                    <div class="row row-xs mg-b-10">
+                        <div class="col-sm">
+                            <input type="text" class="form-control" placeholder="ชื่อ" v-model="form.register.name">
+                        </div>
+                        <div class="col-sm mg-t-10 mg-sm-t-0">
+                            <input type="text" class="form-control" placeholder="บริษัท (ไม่จำเป็น)" v-model="form.register.company">
+                        </div>
+                    </div>
+                    <!-- row -->
+                    <div class="row row-xs mg-b-10">
+                        <div class="col-sm">
+                            <input type="text" class="form-control" placeholder="ที่อยู่" v-model="form.register.address">
+                        </div>
+                    </div>
+                    <!-- row -->
+                    <div class="row row-xs mg-b-10">
+                        <div class="col-sm">
+                            <input type="text" class="form-control" placeholder="หมายเลขโทรศัพท์" v-model="form.register.phone">
+                        </div>
+                    </div>
+                    <!-- row -->
+                    <div class="row row-xs mg-b-10">
+                        <div class="col-sm">
+                            <input type="email" class="form-control" placeholder="Email" v-model="form.register.email">
+                        </div>
+                        <div class="col-sm mg-t-10 mg-sm-t-0">
+                            <input type="password" class="form-control" placeholder="รหัสผ่าน" v-model="form.register.password">
+                        </div>
+                    </div>
+                    <!-- row -->
+                    <button type="button" class="btn btn-primary btn-block btn-signin" @click="send_register">สมัครสมาชิก</button>
+                    <p class="mg-t-40 mg-b-0">
+                        เป็นสมาชิกอยู่แล้ว?
+                        <router-link to="/login">เข้าสู่ระบบ</router-link>
+                    </p>
+                </div>
+                <!-- signin-box -->
+            </div>
+            <!-- signin-right -->
+            <div class="signin-left">
+                <div class="signin-box">
+                    <h2 class="slim-logo">
+                        <router-link to="/">
+                            <img style="height: 50px;" src="https://studio.phumin.in.th/assets/logo/logo-60.png">
+                            <span class="align-bottom" style="top: 8px;position: relative;">Studio</span>
+                        </router-link>
+                    </h2>
+                    <p>
+                        ให้บริการ VPS และ Hosting คุณภาพ
+                        <br> รับจ้างเขียนโปรแกรม
+                        <br> รับจ้างแก้ไขงานเขียนโปรแกรมต่างๆ
+                    </p>
+                    <p class="tx-12">© Copyright 2018. All Rights Reserved.</p>
+                </div>
+            </div>
+            <!-- signin-left -->
+        </div>
+        <!-- Register page -->
+
+        <!-- Forgot Password -->
+        <div class="d-md-flex flex-row-reverse" v-if="$route.path.indexOf('fotgot-password') > -1">
+            <div class="signin-right">
+                <div class="signin-box" v-if="form.forgot.sent == false">
+                    <h2 class="signin-title-primary">ลืมรหัสผ่านหรือ!</h2>
+                    <h3 class="signin-title-secondary">กรอก Email เพื่อรับลิงค์รีเซ็ตรหัสผ่าน</h3>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="อีเมล์" v-model="form.forgot.email">
+                    </div>
+                    <!-- form-group -->
+                    <button class="btn btn-primary btn-block btn-signin" :disabled="form.forgot.loading" @click="send_fotgot">ส่งลิงค์รีเซ็ตรหัสผ่าน</button>
+                    <p class="mg-b-0">
+                        เป็นสมาชิกแล้ว?
+                        <router-link to="/login">เข้าสู่ระบบ</router-link>
+                    </p>
+                </div>
+                <div class="signin-box" v-else>
+                    <h2 class="signin-title-primary">เราได้ส่งอีเมล์ไปให้คุณแล้ว</h2>
+                    <h3 class="signin-title-secondary">หากอีเมล์ไม่อยู่ในกล่องข้อความ ให้ลองดูใน Junk mail หรือ อีเมล์ขยะ</h3>
+                    <p class="mg-b-0">
+                        เป็นสมาชิกแล้ว?
+                        <router-link to="/login">เข้าสู่ระบบ</router-link>
+                    </p>
+                </div>
+            </div>
+            <!-- signin-right -->
+            <div class="signin-left">
+                <div class="signin-box">
+                    <h2 class="slim-logo">
+                        <router-link to="/">
+                            <img style="height: 50px;" src="https://studio.phumin.in.th/assets/logo/logo-60.png">
+                            <span class="align-bottom" style="top: 8px;position: relative;">Studio</span>
+                        </router-link>
+                    </h2>
+                    <p>
+                        ให้บริการ VPS และ Hosting คุณภาพ
+                        <br> รับจ้างเขียนโปรแกรม
+                        <br> รับจ้างแก้ไขงานเขียนโปรแกรมต่างๆ
+                    </p>
+                    <p class="tx-12">© Copyright 2018. All Rights Reserved.</p>
+                </div>
+            </div>
+            <!-- signin-left -->
+        </div>
+        <!-- Forgot Password -->
+
+        <!-- Forgot Password -->
+        <div class="d-md-flex flex-row-reverse" v-if="$route.path.indexOf('reset-password') > -1">
+            <div class="signin-right">
+                <div class="signin-box" v-if="form.reset.checked == false && form.reset.reseted == false">
+                    <h2 class="signin-title-primary">กำลังตรวจสอบ Token...</h2>
+                    <div class="row">
+
+                    </div>
+                </div>
+                <div class="signin-box" v-else-if="form.reset.checked == true && form.reset.reseted == false">
+                    <h2 class="signin-title-primary">ตั้งรหัสผ่านใหม่</h2>
+                    <div class="form-group">
+                        <input type="password" class="form-control" placeholder="รหัสผ่าน" v-model="form.reset.password">
+                    </div>
+                    <!-- form-group -->
+                    <button class="btn btn-primary btn-block btn-signin" :disabled="form.reset.loading || form.reset.password == ''" @click="send_resetpass">เปลี่ยนรหัสผ่าน</button>
+                </div>
+                <div class="signin-box" v-else-if="form.reset.checked == true && form.reset.reseted == true">
+                    <h2 class="signin-title-primary">รหัสผ่านของคุณได้เปลี่ยนแล้ว</h2>
+                    <h3 class="signin-title-secondary">ระบบจะนำไปยังหน้าเข้าสู่ระบบภาใน 5 วินาที</h3>
+                    <p class="mg-b-0">
+                        <router-link to="/login">เข้าสู่ระบบทันที</router-link>
+                    </p>
+                </div>
+            </div>
+            <!-- signin-right -->
+            <div class="signin-left">
+                <div class="signin-box">
+                    <h2 class="slim-logo">
+                        <router-link to="/">
+                            <img style="height: 50px;" src="https://studio.phumin.in.th/assets/logo/logo-60.png">
+                            <span class="align-bottom" style="top: 8px;position: relative;">Studio</span>
+                        </router-link>
+                    </h2>
+                    <p>
+                        ให้บริการ VPS และ Hosting คุณภาพ
+                        <br> รับจ้างเขียนโปรแกรม
+                        <br> รับจ้างแก้ไขงานเขียนโปรแกรมต่างๆ
+                    </p>
+                    <p class="tx-12">© Copyright 2018. All Rights Reserved.</p>
+                </div>
+            </div>
+            <!-- signin-left -->
+        </div>
+        <!-- Forgot Password -->
+
+        <!-- Login page -->
+        <div class="d-md-flex flex-row-reverse" v-else>
+            <div class="signin-right">
+                <div class="signin-box">
+                    <h2 class="signin-title-primary">ยินดีต้อนรับกลับมา!</h2>
+                    <h3 class="signin-title-secondary">เข้าสู่ระบบเพื่อไปยัง Control Panel</h3>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="อีเมล์" v-model="form.login.email" @keyup.enter="send_login">
+                    </div>
+                    <!-- form-group -->
+                    <div class="form-group">
+                        <input type="password" class="form-control" placeholder="รหัสผ่าน" v-model="form.login.password" @keyup.enter="send_login">
+                    </div>
+                    <!-- form-group -->
+                    <button class="btn btn-primary btn-block btn-signin" @click="send_login">เข้าสู่ระบบ</button>
+                    <p class="mg-b-0">
+                        <router-link to="/fotgot-password">ลืมรหัสผ่าน</router-link>
+                        <br> ยังไม่ได้เป็นสมาชิก?
+                        <router-link to="/register">สมัครสมาชิก</router-link>
+                    </p>
+                </div>
+            </div>
+            <!-- signin-right -->
+            <div class="signin-left">
+                <div class="signin-box">
+                    <h2 class="slim-logo">
+                        <router-link to="/">
+                            <img style="height: 50px;" src="https://studio.phumin.in.th/assets/logo/logo-60.png">
+                            <span class="align-bottom" style="top: 8px;position: relative;">Studio</span>
+                        </router-link>
+                    </h2>
+                    <p>
+                        ให้บริการ VPS และ Hosting คุณภาพ
+                        <br> รับจ้างเขียนโปรแกรม
+                        <br> รับจ้างแก้ไขงานเขียนโปรแกรมต่างๆ
+                    </p>
+                    <p class="tx-12">© Copyright 2018. All Rights Reserved.</p>
+                </div>
+            </div>
+            <!-- signin-left -->
+        </div>
+        <!-- Login page -->
+
+    </div>
+    <div v-else>
+        <div class="slim-header">
+            <div class="container">
+                <div class="slim-header-left">
+                    <h2 class="slim-logo">
+                        <router-link to="/">
+                            <img style="height: 50px;" src="https://studio.phumin.in.th/assets/logo/logo-60.png">
+                            <span class="align-bottom" style="top: 8px;position: relative;">Studio</span>
+                        </router-link>
+                    </h2>
+                </div>
+                <!-- slim-header-left -->
+                <div class="slim-header-right">
+                    <div class="dropdown dropdown-a" v-show="false">
+                        <a href="" class="header-notification" data-toggle="dropdown">
+                            <i class="icon ion-ios-bell-outline"></i>
+                            <span class="indicator"></span>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-menu-header">
+                                <h6 class="dropdown-menu-title">การแจ้งเตือน</h6>
+                                <div>
+                                    <a href="">อ่านแล้วทั้งหมด</a>
+                                </div>
+                            </div>
+                            <!-- dropdown-menu-header -->
+                            <div class="dropdown-activity-list">
+                                <div class="activity-label">Today, December 13, 2017</div>
+                                <div class="activity-item">
+                                    <div class="row no-gutters">
+                                        <div class="col-2 tx-right">10:15am</div>
+                                        <div class="col-2 tx-center">
+                                            <span class="square-10 bg-success"></span>
+                                        </div>
+                                        <div class="col-8">Purchased christmas sale cloud storage</div>
+                                    </div>
+                                    <!-- row -->
+                                </div>
+                                <!-- activity-item -->
+                                <div class="activity-item">
+                                    <div class="row no-gutters">
+                                        <div class="col-2 tx-right">9:48am</div>
+                                        <div class="col-2 tx-center">
+                                            <span class="square-10 bg-danger"></span>
+                                        </div>
+                                        <div class="col-8">Login failure</div>
+                                    </div>
+                                    <!-- row -->
+                                </div>
+                                <!-- activity-item -->
+                                <div class="activity-item">
+                                    <div class="row no-gutters">
+                                        <div class="col-2 tx-right">7:29am</div>
+                                        <div class="col-2 tx-center">
+                                            <span class="square-10 bg-warning"></span>
+                                        </div>
+                                        <div class="col-8">(D:) Storage almost full</div>
+                                    </div>
+                                    <!-- row -->
+                                </div>
+                                <!-- activity-item -->
+                                <div class="activity-item">
+                                    <div class="row no-gutters">
+                                        <div class="col-2 tx-right">3:21am</div>
+                                        <div class="col-2 tx-center">
+                                            <span class="square-10 bg-success"></span>
+                                        </div>
+                                        <div class="col-8">1 item sold
+                                            <strong>Christmas bundle</strong>
+                                        </div>
+                                    </div>
+                                    <!-- row -->
+                                </div>
+                                <!-- activity-item -->
+                                <div class="activity-label">Yesterday, December 12, 2017</div>
+                                <div class="activity-item">
+                                    <div class="row no-gutters">
+                                        <div class="col-2 tx-right">6:57am</div>
+                                        <div class="col-2 tx-center">
+                                            <span class="square-10 bg-success"></span>
+                                        </div>
+                                        <div class="col-8">Earn new badge
+                                            <strong>Elite Author</strong>
+                                        </div>
+                                    </div>
+                                    <!-- row -->
+                                </div>
+                                <!-- activity-item -->
+                            </div>
+                            <!-- dropdown-activity-list -->
+                            <div class="dropdown-list-footer">
+                                <a href="#">
+                                    <i class="fa fa-angle-down"></i> Show All Activities
+                                </a>
+                            </div>
+                        </div>
+                        <!-- dropdown-menu-right -->
+                    </div>
+
+
+                    <!-- dropdown -->
+                    <div class="dropdown dropdown-c">
+                        <a href="#" class="logged-user" data-toggle="dropdown">
+                            <img :src="'https://www.gravatar.com/avatar/' + $store.getters.user.avatar + '?s=90'" />
+                            <span>{{ $store.getters.user.name }}</span>
+                            <i class="fa fa-angle-down"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <nav class="nav">
+                                <router-link to="/setting" class="nav-link">
+                                    <i class="icon ion-ios-gear"></i> ตั้งค่า
+                                </router-link>
+                                <router-link to="/notification" class="nav-link" v-if="false">
+                                    <i class="icon ion-ios-bell-outline"></i> การแจ้งเตือน
+                                </router-link>
+                                <a href="#/logout" class="nav-link" @click="send_logout">
+                                    <i class="icon ion-forward"></i> ออกจากระบบ
+                                </a>
+                            </nav>
+                        </div>
+                        <!-- dropdown-menu -->
+                    </div>
+                    <!-- dropdown -->
+                </div>
+                <!-- header-right -->
+            </div>
+            <!-- container -->
+        </div>
+        <!-- slim-header -->
+
+        <div class="slim-navbar">
+            <div class="container">
+                <ul class="nav">
+                    <li :class="['nav-item', {'active': ['vps-list', 'vps-detail', 'vps-add'].indexOf($route.name) > -1}]">
+                        <router-link :to="{ name: 'vps-list' }" class="nav-link">
+                            <i class="icon fa fa-server"></i>
+                            <span>VPS</span>
+                        </router-link>
+                    </li>
+                    <li :class="['nav-item', {'active': ['billing'].indexOf($route.name) > -1}]">
+                        <router-link to="/billing" class="nav-link">
+                            <i class="icon ion-card"></i>
+                            <span>เติมเงิน</span>
+                        </router-link>
+                    </li>
+                    <li :class="['nav-item', {'active': ['document', 'document-detail'].indexOf($route.name) > -1}]">
+                        <router-link to="/document" class="nav-link">
+                            <i class="icon ion-ios-chatboxes-outline"></i>
+                            <span>วิธีใช้ & บทความ</span>
+                            <span class="square-8" v-show="false"></span>
+                        </router-link>
+                    </li>
+                    <li :class="['nav-item', 'with-sub', 'mega-dropdown', {'active': menu.admin.indexOf($route.name) > -1}]" v-if="$store.getters.user.admin">
+                        <router-link to="/admin" class="nav-link">
+                            <i class="icon ion-ios-filing-outline"></i>
+                            <span>Admin Panel</span>
+                        </router-link>
+                        <div class="sub-item">
+                            <div class="row">
+                                <div class="col-lg">
+                                    <label class="section-label">User (บัญชีผู้ใช้)</label>
+                                    <ul>
+                                        <li>
+                                            <router-link to="/admin/user-list">รายชื่อบัญชีผู้ใช้</router-link>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <!-- col -->
+                                <div class="col-lg">
+                                    <label class="section-label">Package (แพ็กเกจ)</label>
+                                    <ul>
+                                        <li>
+                                            <router-link to="/admin/package-list">รายการแพ็กเกจ</router-link>
+                                        </li>
+                                        <li>
+                                            <router-link to="/admin/package-add">เพิ่มแพ็กเกจ</router-link>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <!-- col -->
+                                <div class="col-lg">
+                                    <label class="section-label">Server (จัดการเครื่องเซิฟเวอร์หลัก)</label>
+                                    <ul>
+                                        <li>
+                                            <router-link to="/admin/server-list">เครื่องเซิฟเวอร์ทั้งหมด</router-link>
+                                        </li>
+                                        <li>
+                                            <router-link to="/admin/server-add">เพิ่มเครื่องเซิฟเวอร์</router-link>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <!-- col -->
+                                <div class="col-lg">
+                                    <label class="section-label">Setting (ตั้งค่าเว็บไซต์)</label>
+                                    <ul>
+                                        <li>
+                                            <router-link to="/admin/setting-common">ทั่วไป</router-link>
+                                        </li>
+                                        <li>
+                                            <router-link to="/admin/setting-payment">ทางการเติมเงิน/ชำระเงิน</router-link>
+                                        </li>
+                                        <li>
+                                            <router-link to="/admin/setting-sms">SMS Gateway</router-link>
+                                        </li>
+                                        <li>
+                                            <router-link to="/admin/setting-license">License และ Update (อัพเดท)</router-link>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <!-- col -->
+                            </div>
+                            <!-- row -->
+                        </div>
+                        <!-- dropdown-menu -->
+                    </li>
+                </ul>
+            </div>
+            <!-- container -->
+        </div>
+        <!-- slim-navbar -->
+
+        <div class="slim-mainpanel">
+            <div :class="['container', {'container-messages': $route.name == 'support'}]">
+                <router-view></router-view>
+            </div>
+            <!-- container -->
+        </div>
+        <!-- slim-mainpanel -->
+
+        <div class="slim-footer" v-show="$route.name != 'support'">
+            <div class="container">
+                <p>Copyright 2018 &copy; All Rights Reserved. Phumin Studio</p>
+                <p>
+                    Designed by
+                    <a href="http://themepixels.me/slim/template">ThemePixels</a>
+                </p>
+            </div>
+            <!-- container -->
+        </div>
+        <!-- slim-footer -->
+    </div>
+</div>

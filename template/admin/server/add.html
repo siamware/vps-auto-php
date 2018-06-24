@@ -1,0 +1,149 @@
+<div>
+      <div v-if="$store.getters.user.admin">
+            <div class="slim-pageheader">
+                  <ol class="breadcrumb slim-breadcrumb">
+                        <li class="breadcrumb-item">
+                              Home
+                        </li>
+                        <li class="breadcrumb-item">
+                              <router-link to="/admin">Admin Panel</router-link>
+                        </li>
+                        <li aria-current="page" class="breadcrumb-item active">เพิ่มเซิฟเวอร์</li>
+                  </ol>
+                  <h6 class="slim-pagetitle">เพิ่มเซิฟเวอร์</h6>
+            </div>
+
+            <div class="row row-sm">
+                  <div class="col-lg">
+                        <div class="card">
+                              <div class="card-body">
+                                    <div class="row" v-if="$store.getters.license === false">
+                                          <div class="col-12">
+                                                <div class="sk-circle">
+                                                      <div class="sk-circle1 sk-child"></div>
+                                                      <div class="sk-circle2 sk-child"></div>
+                                                      <div class="sk-circle3 sk-child"></div>
+                                                      <div class="sk-circle4 sk-child"></div>
+                                                      <div class="sk-circle5 sk-child"></div>
+                                                      <div class="sk-circle6 sk-child"></div>
+                                                      <div class="sk-circle7 sk-child"></div>
+                                                      <div class="sk-circle8 sk-child"></div>
+                                                      <div class="sk-circle9 sk-child"></div>
+                                                      <div class="sk-circle10 sk-child"></div>
+                                                      <div class="sk-circle11 sk-child"></div>
+                                                      <div class="sk-circle12 sk-child"></div>
+                                                </div>
+                                          </div>
+                                    </div>
+                                    <div class="row" v-if="typeof $store.getters.license == 'object'">
+                                          <div class="col-md-5" v-show="step == 1">
+                                                <h3>ตรวจสอบหมายเลข IP</h3>
+                                                <hr>
+                                                <div class="form-group">
+                                                      <label class="form-control-label">Hypervisor
+                                                            <span class="tx-danger">*</span>
+                                                      </label>
+                                                      <select class="form-control" v-model="form.hypervisor">
+                                                            <option></option>
+                                                            <option value="xenserver">Xenserver</option>
+                                                      </select>
+                                                </div>
+                                                <div class="form-group">
+                                                      <label class="form-control-label">IP หรือ Domain
+                                                            <span class="tx-danger">*</span>
+                                                      </label>
+                                                      <input type="text" class="form-control" placeholder="หมายเลข IP หรือโดเมนเนม" v-model="form.ip">
+                                                </div>
+                                                <div class="form-group">
+                                                      <label class="form-control-label">Port
+                                                            <span class="tx-danger">*</span>
+                                                      </label>
+                                                      <input type="text" class="form-control" placeholder="Port" v-model="form.port">
+                                                </div>
+                                                <div class="form-group">
+                                                      <label class="form-control-label">Username
+                                                            <span class="tx-danger">*</span>
+                                                      </label>
+                                                      <input type="text" class="form-control" placeholder="Username" v-model="form.user">
+                                                </div>
+                                                <div class="form-group">
+                                                      <label class="form-control-label">Password
+                                                            <span class="tx-danger">*</span>
+                                                      </label>
+                                                      <input type="text" class="form-control" placeholder="Password" v-model="form.pass">
+                                                </div>
+                                                <div class="form-group">
+                                                      <button class="btn btn-primary" type="button" @click="check" :disabled="loading">ตรวจสอบสถานะ</button>
+                                                      <span :class="[{'tx-danger': message_mode == 'error'}, {'tx-success': message_mode == 'success'}]" v-html="message"></span>
+                                                </div>
+                                                <pre>{{ $store.getters.license }}</pre>
+                                          </div>
+                                          <div class="col-md-5" v-show="step == 2">
+                                                <h3>ตรวจสอบการใช้งาน</h3>
+                                                <hr>
+                                                <div class="text-center text-danger" v-if="$store.getters.license.whitelist && $store.getters.license.allow_list.indexOf(form.ip) == -1">
+                                                      เครื่องเซิฟเวอร์นี้ไม่สามารถใช้งานได้<br>
+                                                      <button class="btn btn-danger btn-sm" type="button" @click="step = 1" :disabled="loading">ย้อนกลับ</button>
+                                                </div>
+                                                <div class="text-center text-danger" v-else-if="$store.getters.license.active_list.indexOf(form.ip) != -1">
+                                                      เครื่องเซิฟเวอร์นี้ถูกใช้งานแล้ว<br>
+                                                      <button class="btn btn-danger btn-sm" type="button" @click="step = 1" :disabled="loading">ย้อนกลับ</button>
+                                                </div>
+                                                <div class="text-center" v-else-if="$store.getters.license.limit.server == -1 || $store.getters.license.limit.server > $store.getters.license.use.server">
+                                                      คุณต้องการเพิ่มเครื่องเข้าสู่ระบบใช่หรือไม่?<br>
+                                                      <button class="btn btn-success btn-sm" type="button" @click="active" :disabled="loading">เปิดใช้งาน</button>
+                                                      <button class="btn btn-danger btn-sm" type="button" @click="step = 1" :disabled="loading">ยกเลิก</button>
+                                                </div>
+                                                <div class="text-center text-danger" v-else>
+                                                      ไม่สามารถเพิ่มเซิฟเวอร์ได้แล้วเนื่องจากสิทธิ์การใช้งานถูกใช้จนหมด
+                                                </div>
+                                          </div>
+                                          <div class="col-md-7">
+                                                <table class="table table-bordered">
+                                                      <tr>
+                                                            <td>ข้อจำกัด</td>
+                                                            <td>
+                                                                  <ul>
+                                                                        <li v-for="(v, k) in $store.getters.license.limit" :key="k" v-show="usage_visible(k)">{{ usage_label(k) }} :
+                                                                              <span v-html="usage_format(k, v)"></span>
+                                                                        </li>
+                                                                  </ul>
+                                                            </td>
+                                                      </tr>
+                                                      <tr>
+                                                            <td>การใช้งานปัจจุบัน</td>
+                                                            <td>
+                                                                  <ul>
+                                                                        <li v-for="(v, k) in $store.getters.license.use" :key="k" v-show="usage_visible(k)">{{ usage_label(k) }} :
+                                                                              <span v-html="usage_format_limit(k, v, $store.getters.license.limit[k])"></span>
+                                                                        </li>
+                                                                  </ul>
+                                                            </td>
+                                                      </tr>
+                                                      <tr>
+                                                            <td>เครื่องที่ใช้งาน</td>
+                                                            <td>
+                                                                  <ul>
+                                                                        <li v-for="(v, i) in $store.getters.license.active_list" :key="i">{{ v }}</li>
+                                                                  </ul>
+                                                            </td>
+                                                      </tr>
+                                                      <tr>
+                                                            <td>เวลาการใช้งานที่เหลือ</td>
+                                                            <td>
+                                                                  <countdown :finish="$store.getters.license.expire"></countdown>
+                                                            </td>
+                                                      </tr>
+                                                </table>
+                                          </div>
+                                    </div>
+                              </div>
+                              <!-- card-footer -->
+                        </div>
+                        <!-- card -->
+                  </div>
+                  <!-- col-8 -->
+            </div>
+      </div>
+      <error-404 v-else></error-404>
+</div>

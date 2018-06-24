@@ -1,0 +1,30 @@
+<div>
+      <div v-if="$store.getters.user.admin" class="">
+            <div class="slim-pageheader">
+                  <ol class="breadcrumb slim-breadcrumb">
+                        <li class="breadcrumb-item">
+                              Home
+                        </li>
+                        <li class="breadcrumb-item">
+                              <router-link to="/admin">Admin Panel</router-link>
+                        </li>
+                        <li aria-current="page" class="breadcrumb-item active">ตั้งค่า</li>
+                  </ol>
+                  <h6 class="slim-pagetitle">ตั้งค่า</h6>
+            </div>
+
+            <div class="row row-sm">
+                  <div class="col-lg">
+                        <div class="card">
+                              <div class="card-body">
+                                    
+                              </div>
+                              <!-- card-footer -->
+                        </div>
+                        <!-- card -->
+                  </div>
+                  <!-- col-8 -->
+            </div>
+      </div>
+      <error-404 v-else></error-404>
+</div>

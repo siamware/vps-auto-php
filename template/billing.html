@@ -1,0 +1,264 @@
+<div>
+      <div class="slim-pageheader">
+            <ol class="breadcrumb slim-breadcrumb">
+                  <li class="breadcrumb-item">
+                        <a href="#">Home</a>
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">เติมเงิน</li>
+            </ol>
+            <h6 class="slim-pagetitle">ตั้งค่าการเติมเงิน / ชำระเงิน</h6>
+      </div>
+      <div class="row row-sm">
+            <div class="col-lg-6">
+                  <div class="card card-body">
+                        <h3 class="card-title tx-dark tx-medium mg-b-10">ยอดเงินของคุณ</h3>
+                        <h5 class="card-text">฿ {{ $store.getters.user.credit }}</h5>
+                  </div>
+            </div>
+            <div class="col-lg-6">
+                  <div class="card card-body">
+                        <h3 class="card-title tx-dark tx-medium mg-b-10">ค่าใช้จ่ายรายเดือนของคุณ</h3>
+                        <h5 class="card-text">฿ {{ cost_per_month }} / เดือน</h5>
+                  </div>
+            </div>
+            <div class="col-lg-6">
+                  <div class="card mg-t-15">
+                        <div class="card-body" v-if="true || $store.getters.user.admin">
+                              <h3 class="card-title tx-dark tx-medium mg-b-10">
+                                    เติมเงินด้วยบัตร True Wallet
+                                    <br>
+                                    <small>(เบอร์ 091-8585-234)</small>
+                              </h3>
+                              <!-- form-group -->
+
+                              <div class="form-group">
+                                    <label class="form-control-label">Transaction Id</label>
+                                    <input type="text" name="cardname" class="form-control" v-model="truewallet.transaction">
+                              </div>
+                              <!-- form-group -->
+
+                              <p class="">
+                                    <label class="ckbox">
+                                          <input type="checkbox" v-model="truewallet.agree" checked>
+                                          <span>ฉันยอมรับเงื่อนไขการใช้งาน</span>
+                                    </label>
+                              </p>
+
+                              <div class="">
+                                    <button class="btn btn-primary pd-x-20" @click="tw_submit">ยืนยัน</button>
+                              </div>
+                              <br>
+                              <span>หมายเหตุ : ระบบจะตรวจสอบทุกๆ 3 นาที หากแจ้งแล้วไม่ได้ ให้ลองใหม่ภายใน 3 นาที</span>
+                        </div>
+                        <div class="card-body" v-else>
+                              <h3 class="card-title tx-dark tx-medium mg-b-10">เติมเงินด้วยบัตร True Wallet</h3>
+                              <div class="text-center mg-t-25">- ปิดปรับปรุง -</div>
+                        </div>
+                        <!-- card-body -->
+                  </div>
+
+
+
+                  <!--<div class="card mg-t-15">
+                        <div class="card-body">
+                              <h3 class="card-title tx-dark tx-medium mg-b-10">ชำระด้วยบัตรเครดิต/เดบิต</h3>
+                              <!-- form-group - ->
+
+                              <p class="tx-32">
+                                    <i class="fa fa-cc-visa mg-r-5"></i>
+                                    <i class="fa fa-cc-mastercard mg-r-5"></i>
+                                    <i class="fa fa-cc-discover"></i>
+                              </p>
+
+                              <div class="form-group">
+                                    <label class="form-control-label">หมายเลขบัตร</label>
+                                    <input type="text" name="cardno" class="form-control">
+                              </div>
+                              <!-- form-group - ->
+
+                              <div class="row">
+                                    <div class="col-sm-5">
+                                          <div class="form-group">
+                                                <label class="form-control-label">วันที่หมดอายุ</label>
+                                                <div class="row">
+                                                      <div class="col">
+                                                            <input type="text" name="cardmonth" placeholder="MM" class="form-control">
+                                                      </div>
+                                                      <div class="col">
+                                                            <input type="text" name="cardyear" placeholder="YY" class="form-control">
+                                                      </div>
+                                                </div>
+                                          </div>
+                                          <!-- form-group - ->
+                                    </div>
+                                    <!-- col-5 - ->
+                                    <div class="col-sm-4">
+                                          <div class="form-group">
+                                                <label class="form-control-label">CVV </label>
+                                                <input type="text" name="cardno" class="form-control">
+                                          </div>
+                                          <!-- form-group - ->
+                                    </div>
+                                    <!-- col-4 - ->
+                              </div>
+                              <!-- row - ->
+
+                              <div class="form-group">
+                                    <label class="form-control-label">ชื่อบนบัตร</label>
+                                    <input type="text" name="cardname" class="form-control">
+                              </div>
+                              <!-- form-group - ->
+
+                              <p class="">
+                                    <label class="ckbox">
+                                          <input type="checkbox" checked="">
+                                          <span>ฉันยอมรับเงื่อนไขการใช้งาน</span>
+                                    </label>
+                              </p>
+
+                              <div class="">
+                                    <button class="btn btn-primary pd-x-20">Submit</button>
+                                    <form>
+                                          <button class="btn btn-primary pd-x-20" id="checkout-button-1">1</button>
+                                          <button class="btn btn-primary pd-x-20 checkout-button-2">2</button>
+                                          <button class="btn btn-primary pd-x-20" id="checkout-button-3">3</button>
+                                    </form>
+                              </div>
+                        </div>
+                        <!-- card-body - ->
+                  </div>-->
+            </div>
+            <div class="col-lg-6">
+                  <div class="card mg-t-15">
+                        <div class="card-body">
+                              <h3 class="card-title tx-dark tx-medium mg-b-10">
+                                    เติมเงินด้วยบัตร Truemoney
+                                    <br>
+                                    <small>(ค่าธรรมเนียม 15%)</small>
+                              </h3>
+                              <!-- form-group -->
+
+                              <div class="form-group">
+                                    <label class="form-control-label">หมายเลขบัตร 14 หลัก</label>
+                                    <input type="text" name="cardname" class="form-control" v-model="truemoney.number" maxlength="14">
+                              </div>
+                              <!-- form-group -->
+
+                              <p class="">
+                                    <label class="ckbox">
+                                          <input type="checkbox" v-model="truemoney.agree" checked>
+                                          <span>ฉันยอมรับเงื่อนไขการใช้งาน</span>
+                                    </label>
+                              </p>
+
+                              <div class="">
+                                    <button class="btn btn-primary pd-x-20" @click="tm_submit">ตรวจสอบเลขบัตร</button>
+                              </div>
+                        </div>
+                        <!-- card-body -->
+                  </div>
+            </div>
+            <div class="col-lg-6">
+                  <div class="card mg-t-15">
+                        <div class="card-body">
+                              <h3 class="card-title tx-dark tx-medium mg-b-10">
+                                    แจ้งโอนเงินผ่านธนาคาร
+                                    <br>
+                              </h3>
+                              <!-- form-group -->
+                              <div class="form-group">
+                                    <label class="form-control-label">ธนาคาร</label>
+                                    <label class="rdiobox">
+                                          <input type="radio" value="kbank" v-model="bank.bank">
+                                          <span>
+                                                <img src="assets/img/Bank_KBANK.png" width="20">
+                                                ธนาคารกสิกรไทย (455-2-21107-9) ภูมินทร์ จันทเลิศ
+                                          </span>
+                                    </label>
+                              </div>
+                              <div class="row">
+                                    <div class="col-sm col-4">
+                                          <div class="form-group">
+                                                <label class="form-control-label">วัน</label>
+                                                <select class="form-control" v-model="bank.day">
+                                                      <option v-for="d in 31" :value="d">{{ d }}</option>
+                                                </select>
+                                          </div>
+                                    </div>
+                                    <div class="col-sm col-4">
+                                          <div class="form-group">
+                                                <label class="form-control-label">เดือน</label>
+                                                <select class="form-control" v-model="bank.month">
+                                                      <option v-for="m in 12" :value="m">{{ m }}</option>
+                                                </select>
+                                          </div>
+                                    </div>
+                                    <div class="col-sm col-4">
+                                          <div class="form-group">
+                                                <label class="form-control-label">ปี</label>
+                                                <select class="form-control" v-model="bank.year">
+                                                      <option value="2018">2018</option>
+                                                      <option value="2019">2019</option>
+                                                      <option value="2020">2020</option>
+                                                </select>
+                                          </div>
+                                    </div>
+                                    <div class="col-sm col-6">
+                                          <div class="form-group">
+                                                <label class="form-control-label">ชั่วโมง</label>
+                                                <select class="form-control" v-model="bank.hour">
+                                                      <option value="0">00</option>
+                                                      <option v-for="h in 23" :value="h">{{ h >= 10 ? h : '0' + h }}</option>
+                                                </select>
+                                          </div>
+                                    </div>
+                                    <div class="col-sm col-6">
+                                          <div class="form-group">
+                                                <label class="form-control-label">นาที</label>
+                                                <select class="form-control" v-model="bank.minute">
+                                                      <option value="0">00</option>
+                                                      <option v-for="m in 59" :value="m">{{ m >= 10 ? m : '0' + m }}</option>
+                                                </select>
+                                          </div>
+                                    </div>
+                              </div>
+                              <div class="form-group">
+                                    <label class="form-control-label">จำนวนเงิน</label>
+                                    <input class="form-control" type="text" v-model="bank.amount">
+                              </div>
+                              <!-- form-group -->
+
+                              <p class="">
+                                    <label class="ckbox">
+                                          <input type="checkbox" v-model="bank.agree" checked>
+                                          <span>ฉันยอมรับเงื่อนไขการใช้งาน</span>
+                                    </label>
+                              </p>
+
+                              <div class="">
+                                    <button class="btn btn-primary pd-x-20" @click="bank_submit">ตรวจสอบ</button>
+                              </div>
+                              <br>
+                              <span>หมายเหตุ : ระบบจะตรวจสอบทุกๆ 5 นาที หากแจ้งแล้วไม่ได้ ให้ลองใหม่ภายใน 5 นาที</span>
+                        </div>
+                        <!-- card-body -->
+                  </div>
+            </div>
+      </div>
+
+      <div class="modal modal-check">
+            <div class="modal-dialog wd-500">
+                  <div class="modal-content">
+                        <div class="modal-body tx-center pd-y-20 pd-x-20">
+                              <i :class="['icon', 'tx-100', 'lh-1', 'mg-t-20', 'd-inline-block', {'ion-ios-checkmark-outline': modal.statue == 'success'}, {'tx-success': modal.statue == 'success'}, {'ion-ios-close-outline': modal.statue == 'failed'}, {'tx-danger': modal.statue == 'failed'}, {'ion-load-d': modal.statue == 'checking'}, {'tx-warning': modal.statue == 'checking'}]"></i>
+                              <h4 :class="['mg-b-20', {'tx-success': modal.statue == 'success'}, {'tx-danger': modal.statue == 'failed'}, {'tx-warning': modal.statue == 'checking'}]">{{ modal.title }}</h4>
+                              <p class="mg-b-20 mg-x-20">{{ modal.text }}</p>
+                              <button type="button" :class="['btn', 'pd-x-25', {'btn-success': modal.statue == 'success'}, {'btn-danger': modal.statue == 'failed'}, {'btn-warning': modal.statue == 'checking'}]"
+                                    @click="tw_cancel">ปิด</button>
+                        </div>
+                        <!-- modal-body -->
+                  </div>
+                  <!-- modal-content -->
+            </div>
+      </div>
+</div>

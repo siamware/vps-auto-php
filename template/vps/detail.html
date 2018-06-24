@@ -1,0 +1,209 @@
+<div>
+      <div v-if="vps === false">
+            <div class="slim-pageheader">
+                  <ol class="breadcrumb slim-breadcrumb">
+                        <li class="breadcrumb-item">
+                              Home
+                        </li>
+                        <li class="breadcrumb-item" aria-current="page">
+                              <router-link :to="{name: 'vps-list'}">VPS</router-link>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                              ไม่พบ VPS
+                        </li>
+                  </ol>
+                  <h6 class="slim-pagetitle">ไม่พบ VPS</h6>
+            </div>
+
+            <div class="section-wrapper">
+                  <h1 class="error-title">ไม่พบ VPS ที่ตามหา</h1>
+                  <h5 class="tx-sm-24 tx-normal">หากไม่สามารถเข้ามายังหน้าตั้งค่า VPS ได้ กรุณาเข้าสู่เว็บไซต์ใหม่อีกครั้งเพื่อเคลีย cache</h5>
+                  <p class="mg-t-50">
+                        <router-link :to="{name: 'vps-list'}" class="btn btn-outline-primary bd-4">กลับไปหน้าที่แล้ว</router-link>
+                  </p>
+            </div>
+      </div>
+      <div v-else>
+            <div class="slim-pageheader">
+                  <ol class="breadcrumb slim-breadcrumb">
+                        <li class="breadcrumb-item">
+                              Home
+                        </li>
+                        <li class="breadcrumb-item" aria-current="page">
+                              <router-link :to="{name: 'vps-list'}">VPS</router-link>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                              {{ vps.name }}
+                        </li>
+                  </ol>
+                  <h6 class="slim-pagetitle">VPS : {{ vps.name }}</h6>
+            </div>
+
+            <div class="section-wrapper">
+                  <div class="row">
+                        <div class="col-md-6">
+                              <div class="row" v-if="vps.status == 0">
+                                    <div class="col-sm" v-show="vps.state == 'halted'">
+                                          <button type="button" class="btn btn-block btn-primary" @click="start">
+                                                <i class="fa fa-play"></i>
+                                                เปิดเครื่อง
+                                          </button>
+                                    </div>
+                                    <div class="col-sm" v-show="vps.state == 'running' && false">
+                                          <button type="button" class="btn btn-block btn-warning">
+                                                <i class="fa fa-refresh"></i>
+                                                Restart
+                                          </button>
+                                    </div>
+                                    <div class="col-sm" v-show="vps.state == 'running'">
+                                          <button type="button" class="btn btn-block btn-danger" @click="stop">
+                                                <i class="fa fa-power-off"></i>
+                                                Shutdown
+                                          </button>
+                                    </div>
+                                    <div class="col-sm" v-show="vps.state == 'running' && false">
+                                          <button type="button" class="btn btn-block btn-danger">
+                                                <i class="fa fa-stop"></i>
+                                                Force Shutdown
+                                          </button>
+                                    </div>
+                                    <div class="col-sm" v-show="vps.state == 'running'">
+                                          <button type="button" class="btn btn-block btn-primary" @click="console">
+                                                <i class="fa fa-terminal"></i>
+                                                Console
+                                          </button>
+                                    </div>
+                              </div>
+                              <div class="row" v-else-if="vps.status == 99">
+                                    <div class="col-sm text-center ">
+                                          กำลังสร้าง VPS...
+                                    </div>
+                              </div>
+                              <div class="row" v-else-if="vps.status == 98">
+                                    <div class="col-sm text-center ">
+                                                กำลังตั้งค่า IP...
+                                    </div>
+                              </div>
+                              <div class="row" v-else>
+                                    <div class="col-sm text-center text-danger">
+                                          VPS ถูกระงับการใช้งาน กรุณาชำระเงินเพื่อใช้งานต่อ
+                                    </div>
+                              </div>
+                              <br>
+                              <div class="card card-body text-center">
+                                    <h3>VPS : {{ vps.name }}</h3>
+                                    <h5 class="mg-b-0"></h5>
+                                    <hr>
+                                    <div class="row">
+                                          <div class="col-xl-4 col-lg-6 col-md-12 col-sm-4">
+                                                <div class="card card-body bg-primary text-white text-center">
+                                                      <h3>CPU</h3>
+                                                      <h3>{{ vps.cpu }} cores</h3>
+                                                </div>
+                                          </div>
+                                          <div class="col-xl-4 col-lg-6 col-md-12 col-sm-4">
+                                                <div class="card card-body bg-success text-white text-center">
+                                                      <h3>RAMs</h3>
+                                                      <h3>{{ vps.ram }} GB</h3>
+                                                </div>
+                                          </div>
+                                          <div class="col-xl-4 col-lg-12 col-md-12 col-sm-4">
+                                                <div class="card card-body bg-danger text-white text-center">
+                                                      <h3>Disk</h3>
+                                                      <h3>{{ vps.disk }} GB</h3>
+                                                </div>
+                                          </div>
+                                    </div>
+                              </div>
+                        </div>
+                        <div class="col-md-6 mg-md-t-0 mg-t-10">
+                              <h4>รายละเอียดเครื่อง</h4>
+                              <table class="table">
+                                    <tr>
+                                          <td>Default Username</td>
+                                          <td>
+                                                <font class="tx-danger">Administrator</font>
+                                          </td>
+                                    </tr>
+                                    <tr>
+                                          <td>Default Password</td>
+                                          <td>
+                                                <abbr class="tx-danger title" title="ควรเปลี่ยนรหัสผ่านทันที">nuLyp6+SsJW!</abbr>
+                                          </td>
+                                    </tr>
+                                    <tr v-show="vps.status != 1">
+                                          <td>วันใช้งานคงเหลือ</td>
+                                          <td>
+                                                <countdown :finish="vps.expire"></countdown>
+                                                <br>({{ date_format(vps.expire) }})
+                                          </td>
+                                    </tr>
+                                    <tr v-show="vps.status == 1">
+                                          <td class="text-danger">จะถูกลบใน</td>
+                                          <td>
+                                                <countdown :finish="vps.delete"></countdown>
+                                                <br>({{ date_format(vps.delete) }})
+                                          </td>
+                                    </tr>
+                              </table>
+                              <h4>รายละเอียดแพ็กเกจ</h4>
+                              <table class="table">
+                                    <tr>
+                                          <td>แพ็กเกจ</td>
+                                          <td>
+                                                {{ vps.package.name }}
+                                          </td>
+                                    </tr>
+                                    <tr>
+                                          <td>ระยะเวลา</td>
+                                          <td>
+                                                <font class="tx-success">{{ vps.package.time }} วัน</font>
+                                          </td>
+                                    </tr>
+                                    <tr>
+                                          <td>ราคา</td>
+                                          <td>
+                                                <font class="tx-success">{{ vps.package.price }} บาท</font>
+                                          </td>
+                                    </tr>
+                                    <tr>
+                                          <td class="align-middle">ต่ออายุอัตโนมัติ</td>
+                                          <td>
+                                                <button class="btn btn-sm btn-success btn-block" @click="toggle_auto_expand" v-if="vps.auto_expand == 1">
+                                                      <i class="fa fa-check"></i>
+                                                      เปิดใช้งาน
+                                                </button>
+                                                <button class="btn btn-sm btn-danger btn-block" @click="toggle_auto_expand" v-else>
+                                                      <i class="fa fa-remove"></i>
+                                                      ปิดใช้งาน
+                                                </button>
+                                          </td>
+                                    </tr>
+                                    <tr>
+                                          <td colspan="2">
+                                                <div class="row">
+                                                      <div class="col-sm">
+                                                            <button v-if="parseFloat($store.getters.user.credit) >= parseFloat(vps.package.price)" class="btn btn-success btn-block"
+                                                                  :disabled="expanding" @click="expand">
+                                                                  <span v-if="!expanding">
+                                                                        <i class="fa fa-shopping-cart"></i>
+                                                                        ต่ออายุ {{ vps.package.time }} วัน ({{ vps.package.price }} บาท)
+                                                                  </span>
+                                                                  <span v-else>
+                                                                        <i class="fa fa-spinner fa-spin"></i>
+                                                                        กำลังดำเนินการต่ออายุ...
+                                                                  </span>
+                                                            </button>
+                                                            <button v-else class="btn btn-warning btn-block" @click="$router.push({name: 'billing'})">
+                                                                  ยอดเงินในบัญชีไม่เพียงพอ กรุณาเติมเงิน
+                                                            </button>
+                                                      </div>
+                                                </div>
+                                          </td>
+                                    </tr>
+                              </table>
+                        </div>
+                  </div>
+            </div>
+      </div>
+</div>

@@ -75,7 +75,7 @@ $engine->template->bundleJS('apps');
         </script>
         <!-- Your customer chat code -->
         <div class="fb-customerchat" attribution="setup_tool" page_id="1019592918085968" theme_color="#0084ff" logged_in_greeting="สวัสดีครับ มีปัญหาการใช้งานหรือไม่?"
-            logged_out_greeting="สวัสดีครับ มีปัญหาการใช้งานหรือไม่?">
+            logged_out_greeting="สวัสดีครับ Phumin Studio ยินดีให้บริการ">
         </div>
         <?php } ?>
 

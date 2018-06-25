@@ -41,12 +41,12 @@
                                           <div v-show="vps.status != 1">
                                                 <countdown :finish="vps.expire" prefix="หมดอายุใน"></countdown>
                                                 <br>
-                                                <small>({{ date_format(vps.expire) }})</small>
+                                                <small>({{ vps.expire | date_format }})</small>
                                           </div>
                                           <div class="text-danger" v-show="vps.status == 1">
                                                 <countdown :finish="vps.delete" prefix="ลบข้อมูลใน"></countdown>
                                                 <br>
-                                                <small>({{ date_format(vps.delete) }})</small>
+                                                <small>({{ vps.expire | date_format }})</small>
                                           </div>
                                     </td>
                                     <td>

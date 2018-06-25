@@ -8,6 +8,7 @@ class PHUMIN_STUDIO_Code {
       *     vps = Free VPS Code
       *     credit = Credit code
       */
+      public $code_length = 6;
 
       public function getById($id = 0) {
             global $engine;
@@ -29,9 +30,13 @@ class PHUMIN_STUDIO_Code {
                   return false;
             else {
                   $c = query("SELECT * FROM `{$engine->config['prefix']}promo_code` WHERE `code` = ?;", [$code])->fetch(PDO::FETCH_ASSOC);
-                  $c['condition'] = json_decode($c['condition'], true);
-                  $c['promotion'] = json_decode($c['promotion'], true);
-                  return $c;
+                  if ($c) {
+                        $c['condition'] = json_decode($c['condition'], true);
+                        $c['promotion'] = json_decode($c['promotion'], true);
+                        return $c;
+                  } else {
+                        return false;
+                  }
             }
       }
 
@@ -186,5 +191,59 @@ class PHUMIN_STUDIO_Code {
             } else {
                   return false;
             }
+      }
+
+      public function generate($code = "", $type = "discount", $condition = [], $promotion = []) {
+            global $engine;
+
+            $same = true;
+            while($same) {
+                  // Generate code
+                  if($code == "") {
+                        $code = $this->_random_string($this->code_length);
+                  }
+
+                  $num = query("SELECT * FROM `{$engine->config['prefix']}promo_code` WHERE `code` = ?;", [$code])->rowCount();
+                  if ($num == 0) {
+                        $same = false;
+                  } else {
+                        $code = "";
+                  }
+            }
+
+            query("INSERT INTO `{$engine->config['prefix']}promo_code` (`code`, `type`, `condition`, `promotion`) VALUES (?,?,?,?) ;", [$code, $type, json_encode($condition), json_encode($promotion)]);
+            return $code;
+      }
+
+      public function disabled($code) {
+            global $engine;
+
+            if(is_numeric($code)) {
+                  query("UPDATE `{$engine->config['prefix']}promo_code` SET `status` = ? WHERE `id` = ?;", [1, $code]);
+            } else {
+                  query("UPDATE `{$engine->config['prefix']}promo_code` SET `status` = ? WHERE `code` = ?;", [1, $code]);
+            }
+      }
+
+      public function enabled($code) {
+            global $engine;
+
+            if(is_numeric($code)) {
+                  query("UPDATE `{$engine->config['prefix']}promo_code` SET `status` = ? WHERE `id` = ?;", [0, $code]);
+            } else {
+                  query("UPDATE `{$engine->config['prefix']}promo_code` SET `status` = ? WHERE `code` = ?;", [0, $code]);
+            }
+      }
+
+      public function _random_string($len = 5, $specialChar = false){
+            $charset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+            if($specialChar)
+                  $charset .= "!@#$%^&*()";
+            $base = strlen($charset);
+            $result = '';
+            for ($i = 0; $i < $len; $i++){
+                  $result = $charset[rand(0, $base)] . $result;
+            }
+            return $result;
       }
 }

@@ -135,14 +135,14 @@
                                           <td>วันใช้งานคงเหลือ</td>
                                           <td>
                                                 <countdown :finish="vps.expire"></countdown>
-                                                <br>({{ date_format(vps.expire) }})
+                                                <br>({{ vps.expire | date_format }})
                                           </td>
                                     </tr>
                                     <tr v-show="vps.status == 1">
                                           <td class="text-danger">จะถูกลบใน</td>
                                           <td>
                                                 <countdown :finish="vps.delete"></countdown>
-                                                <br>({{ date_format(vps.delete) }})
+                                                <br>({{ vps.expire | date_format }})
                                           </td>
                                     </tr>
                               </table>

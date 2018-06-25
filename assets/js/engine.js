@@ -4,6 +4,23 @@ Version : 0.0.1
 */
 function PHUMIN_STUDIO_HOSTING(callback) {
 
+    Vue.filter('date_format', function (timestamp) {
+        var date = new Date(timestamp * 1000);
+        var text = (date.getDate() >= 10) ? date.getDate() : ("0" + date.getDate());
+        text += "/";
+        text += ((date.getMonth() + 1) >= 10) ? (date.getMonth() + 1) : ("0" + (date.getMonth() + 1));
+        text += "/";
+        text += (date.getFullYear() >= 10) ? date.getFullYear() : ("0" + date.getFullYear());
+        text += " เวลา ";
+        text += (date.getHours() >= 10) ? date.getHours() : ("0" + date.getHours());
+        text += ":";
+        text += (date.getMinutes() >= 10) ? date.getMinutes() : ("0" + date.getMinutes());
+        text += ":";
+        text += (date.getSeconds() >= 10) ? date.getSeconds() : ("0" + date.getSeconds());
+        text += " น.";
+        return text;
+    });
+
     var $engine = this;
     this.$facebook = false;
     this.vue = Vue;
@@ -212,22 +229,6 @@ function PHUMIN_STUDIO_HOSTING(callback) {
                         });
                     },
                     methods: {
-                        date_format: function (timestamp) {
-                            var date = new Date(timestamp * 1000);
-                            var text = (date.getDate() >= 10) ? date.getDate() : ("0" + date.getDate());
-                            text += "/";
-                            text += ((date.getMonth() + 1) >= 10) ? (date.getMonth() + 1) : ("0" + (date.getMonth() + 1));
-                            text += "/";
-                            text += (date.getFullYear() >= 10) ? date.getFullYear() : ("0" + date.getFullYear());
-                            text += " เวลา ";
-                            text += (date.getHours() >= 10) ? date.getHours() : ("0" + date.getHours());
-                            text += ":";
-                            text += (date.getMinutes() >= 10) ? date.getMinutes() : ("0" + date.getMinutes());
-                            text += ":";
-                            text += (date.getSeconds() >= 10) ? date.getSeconds() : ("0" + date.getSeconds());
-                            text += " น.";
-                            return text;
-                        },
                         detail: function (vps) {
                             $('.title').tooltip('dispose');
                             this.$router.push('/vps/' + vps.id);
@@ -453,22 +454,6 @@ function PHUMIN_STUDIO_HOSTING(callback) {
                         },
                     },
                     methods: {
-                        date_format: function (timestamp) {
-                            var date = new Date(timestamp * 1000);
-                            var text = (date.getDate() >= 10) ? date.getDate() : ("0" + date.getDate());
-                            text += "/";
-                            text += ((date.getMonth() + 1) >= 10) ? (date.getMonth() + 1) : ("0" + (date.getMonth() + 1));
-                            text += "/";
-                            text += (date.getFullYear() >= 10) ? date.getFullYear() : ("0" + date.getFullYear());
-                            text += " เวลา ";
-                            text += (date.getHours() >= 10) ? date.getHours() : ("0" + date.getHours());
-                            text += ":";
-                            text += (date.getMinutes() >= 10) ? date.getMinutes() : ("0" + date.getMinutes());
-                            text += ":";
-                            text += (date.getSeconds() >= 10) ? date.getSeconds() : ("0" + date.getSeconds());
-                            text += " น.";
-                            return text;
-                        },
                         toggle_auto_expand: function () {
                             var $self = this;
                             $engine.network.post('vps', 'toggle_auto_expand', {
@@ -603,21 +588,52 @@ function PHUMIN_STUDIO_HOSTING(callback) {
                         };
                     },
                     methods: {
-                        copyRefer: function (e) {
+                        copyRefer: function () {
                             var input = document.getElementById('refer_code');
                             input.select();
                             document.execCommand("copy");
                             toast('คัดลอกแล้ว', '', 'success');
 
                             if (window.getSelection) {
-                                if (window.getSelection().empty) {  // Chrome
+                                if (window.getSelection().empty) { // Chrome
                                     window.getSelection().empty();
-                                } else if (window.getSelection().removeAllRanges) {  // Firefox
+                                } else if (window.getSelection().removeAllRanges) { // Firefox
                                     window.getSelection().removeAllRanges();
                                 }
-                            } else if (document.selection) {  // IE?
+                            } else if (document.selection) { // IE?
                                 document.selection.empty();
                             }
+                        },
+                        newRefer: function () {
+                            var $self = this;
+                            swal({
+                                title: 'คุณต้องการรับรหัสชวนเพื่อนใหม่หรือไม่',
+                                type: 'question',
+                                confirmButtonText: 'ยืนยัน',
+                                showCancelButton: true,
+                                cancelButtonText: 'ยกเลิก',
+                                cancelButtonColor: '#d33',
+                            }).then(function (confirm) {
+                                if (confirm) {
+                                    swal({
+                                        title: 'กำลัง',
+                                        allowOutsideClick: false,
+                                        allowEscapeKey: false,
+                                        onOpen: function () {
+                                            swal.showLoading();
+                                        }
+                                    });
+                                    $engine.network.post('user', 'newRefer', {}, function (res) {
+                                        $self.$store.commit('user', res.data);
+                                        swal({
+                                            title: 'คุณได้รับโค้ดเชิญชวนใหม่แล้ว',
+                                            text: 'โค้ดเชิญชวนมีอายุ 1 ปีหลังจากวันที่ขอรับ',
+                                            type: 'success',
+                                            timer: 1500
+                                        })
+                                    });
+                                }
+                            })
                         },
                         openEdit: function () {
                             $(".modal-setting").modal();
@@ -1392,22 +1408,6 @@ function PHUMIN_STUDIO_HOSTING(callback) {
                         ram_format: function (amount) {
                             return Math.round(amount / 1024 / 1024 / 1024);
                         },
-                        date_format: function (timestamp) {
-                            var date = new Date(timestamp * 1000);
-                            var text = (date.getDate() >= 10) ? date.getDate() : ("0" + date.getDate());
-                            text += "/";
-                            text += ((date.getMonth() + 1) >= 10) ? (date.getMonth() + 1) : ("0" + (date.getMonth() + 1));
-                            text += "/";
-                            text += (date.getFullYear() >= 10) ? date.getFullYear() : ("0" + date.getFullYear());
-                            text += " เวลา ";
-                            text += (date.getHours() >= 10) ? date.getHours() : ("0" + date.getHours());
-                            text += ":";
-                            text += (date.getMinutes() >= 10) ? date.getMinutes() : ("0" + date.getMinutes());
-                            text += ":";
-                            text += (date.getSeconds() >= 10) ? date.getSeconds() : ("0" + date.getSeconds());
-                            text += " น.";
-                            return text;
-                        }
                     },
                     computed: {
                         host: function () {
@@ -1550,22 +1550,6 @@ function PHUMIN_STUDIO_HOSTING(callback) {
                                 $self.get_vm();
                             });
                         },
-                        date_format: function (timestamp) {
-                            var date = new Date(timestamp * 1000);
-                            var text = (date.getDate() >= 10) ? date.getDate() : ("0" + date.getDate());
-                            text += "/";
-                            text += ((date.getMonth() + 1) >= 10) ? (date.getMonth() + 1) : ("0" + (date.getMonth() + 1));
-                            text += "/";
-                            text += (date.getFullYear() >= 10) ? date.getFullYear() : ("0" + date.getFullYear());
-                            text += " เวลา ";
-                            text += (date.getHours() >= 10) ? date.getHours() : ("0" + date.getHours());
-                            text += ":";
-                            text += (date.getMinutes() >= 10) ? date.getMinutes() : ("0" + date.getMinutes());
-                            text += ":";
-                            text += (date.getSeconds() >= 10) ? date.getSeconds() : ("0" + date.getSeconds());
-                            text += " น.";
-                            return text;
-                        },
                     },
                     computed: {
                         host: function () {
@@ -1610,22 +1594,6 @@ function PHUMIN_STUDIO_HOSTING(callback) {
                         };
                     },
                     methods: {
-                        date_format: function (timestamp) {
-                            var date = new Date(timestamp * 1000);
-                            var text = (date.getDate() >= 10) ? date.getDate() : ("0" + date.getDate());
-                            text += "/";
-                            text += ((date.getMonth() + 1) >= 10) ? (date.getMonth() + 1) : ("0" + (date.getMonth() + 1));
-                            text += "/";
-                            text += (date.getFullYear() >= 10) ? date.getFullYear() : ("0" + date.getFullYear());
-                            text += " เวลา ";
-                            text += (date.getHours() >= 10) ? date.getHours() : ("0" + date.getHours());
-                            text += ":";
-                            text += (date.getMinutes() >= 10) ? date.getMinutes() : ("0" + date.getMinutes());
-                            text += ":";
-                            text += (date.getSeconds() >= 10) ? date.getSeconds() : ("0" + date.getSeconds());
-                            text += " น.";
-                            return text;
-                        },
                         usage_visible: function (name) {
                             return ['server', 'vm', 'cpu', 'ram', 'ip'].indexOf(name) > -1;
                         },
@@ -2002,22 +1970,6 @@ function PHUMIN_STUDIO_HOSTING(callback) {
                         };
                     },
                     methods: {
-                        date_format: function (timestamp) {
-                            var date = new Date(timestamp * 1000);
-                            var text = (date.getDate() >= 10) ? date.getDate() : ("0" + date.getDate());
-                            text += "/";
-                            text += ((date.getMonth() + 1) >= 10) ? (date.getMonth() + 1) : ("0" + (date.getMonth() + 1));
-                            text += "/";
-                            text += (date.getFullYear() >= 10) ? date.getFullYear() : ("0" + date.getFullYear());
-                            text += " เวลา ";
-                            text += (date.getHours() >= 10) ? date.getHours() : ("0" + date.getHours());
-                            text += ":";
-                            text += (date.getMinutes() >= 10) ? date.getMinutes() : ("0" + date.getMinutes());
-                            text += ":";
-                            text += (date.getSeconds() >= 10) ? date.getSeconds() : ("0" + date.getSeconds());
-                            text += " น.";
-                            return text;
-                        },
                         usage_visible: function (name) {
                             return ['server', 'vm', 'cpu', 'ram', 'ip'].indexOf(name) > -1;
                         },

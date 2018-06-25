@@ -140,7 +140,11 @@ class PHUMIN_STUDIO_VPS {
                   $data = [$engine->user->id, $package['id'], $promotion['id'], $ip['ip'], $type, $host['id'], $res['opaqueRef'], json_encode($template), $now, $expire, $now, 99, $promotion['promotion']['referer']];
                   query("INSERT INTO `{$engine->config['prefix']}vps` (`owner`, `package`, `promo_code`, `name`, `type`, `host`, `ref`, `template`, `created`, `expire`, `expanded`, `status`, `refer`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);", $data);
                   // Give credit to referer
-                  query("UPDATE `{$engine->config['prefix']}user` SET `credit` = `credit` + ? WHERE `id` = ?;", [$price * (1 - (config('refer_share') / 100)), $promotion['promotion']['referer']]);
+                  $refer_payout = $price * (1 - (config('refer_share') / 100));
+                  $refer_id = $promotion['promotion']['referer'];
+                  query("UPDATE `{$engine->config['prefix']}user` SET `credit` = `credit` + ? WHERE `id` = ?;", [$refer_payout, $refer_id]);
+                  // Create payment to referer
+                  query("INSERT INTO `{$engine->config['prefix']}payment` (`owner`,`amount`,`gateway`,`transaction`,`data`,`debug`,`status`,`time`) VALUES (?,?,?,?,?,?,?,?);", [$refer_id, $refer_payout, 'refer', 'new', json_encode($data), json_encode($data), 'success', time()]);
             } else {
                   // No refer
                   $data = [$engine->user->id, $package['id'], $promotion['id'], $ip['ip'], $type, $host['id'], $res['opaqueRef'], json_encode($template), $now, $expire, $now, 99];
@@ -320,7 +324,11 @@ class PHUMIN_STUDIO_VPS {
 
                   if ($vps_raw['refer'] != 0) {
                         // Give credit to referer
-                        query("UPDATE `{$engine->config['prefix']}user` SET `credit` = `credit` + ? WHERE `id` = ?;", [$price * (1 - (config('refer_share') / 100)), $vps_raw['refer']]);
+                        $refer_payout = $price * (1 - (config('refer_share') / 100));
+                        $refer_id = $vps_raw['refer'];
+                        query("UPDATE `{$engine->config['prefix']}user` SET `credit` = `credit` + ? WHERE `id` = ?;", [$refer_payout, $refer_id]);
+                        // Create payment to referer
+                        query("INSERT INTO `{$engine->config['prefix']}payment` (`owner`,`amount`,`gateway`,`transaction`,`data`,`debug`,`status`,`time`) VALUES (?,?,?,?,?,?,?,?);", [$refer_id, $refer_payout, 'refer', 'expand', json_encode($vps_raw), json_encode($vps_raw), 'success', time()]);
                   }
 
                   // Invoice

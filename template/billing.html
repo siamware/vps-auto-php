@@ -171,8 +171,7 @@
                                     <label class="rdiobox">
                                           <input type="radio" value="kbank" v-model="bank.bank">
                                           <span>
-                                                <img src="assets/img/Bank_KBANK.png" width="20">
-                                                ธนาคารกสิกรไทย (455-2-21107-9) ภูมินทร์ จันทเลิศ
+                                                <img src="assets/img/Bank_KBANK.png" width="20"> ธนาคารกสิกรไทย (455-2-21107-9) ภูมินทร์ จันทเลิศ
                                           </span>
                                     </label>
                               </div>
@@ -181,7 +180,7 @@
                                           <div class="form-group">
                                                 <label class="form-control-label">วัน</label>
                                                 <select class="form-control" v-model="bank.day">
-                                                      <option v-for="d in 31" :value="d">{{ d }}</option>
+                                                      <option v-for="d in 31" :value="d">{{ d >= 10 ? d : '0' + d }}</option>
                                                 </select>
                                           </div>
                                     </div>
@@ -189,7 +188,7 @@
                                           <div class="form-group">
                                                 <label class="form-control-label">เดือน</label>
                                                 <select class="form-control" v-model="bank.month">
-                                                      <option v-for="m in 12" :value="m">{{ m }}</option>
+                                                      <option v-for="m in 12" :value="m">{{ m >= 10 ? m : '0' + m }}</option>
                                                 </select>
                                           </div>
                                     </div>
@@ -240,6 +239,24 @@
                               </div>
                               <br>
                               <span>หมายเหตุ : ระบบจะตรวจสอบทุกๆ 5 นาที หากแจ้งแล้วไม่ได้ ให้ลองใหม่ภายใน 5 นาที</span>
+                        </div>
+                        <!-- card-body -->
+                  </div>
+            </div>
+            <div class="col-lg-6">
+                  <div class="card mg-t-15">
+                        <div class="card-body">
+                              <h3 class="card-title tx-dark tx-medium mg-b-10">
+                                    ประวัติการเติมเงิน
+                              </h3>
+
+                              <table class="table">
+                                    <tr>
+                                          <td></td>
+                                          <td></td>
+                                          <td></td>
+                                    </tr>
+                              </table>
                         </div>
                         <!-- card-body -->
                   </div>

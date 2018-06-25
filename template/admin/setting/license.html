@@ -78,11 +78,11 @@
                                           </tr>
                                           <tr>
                                                 <td>เริ่มใช้งานตั้งแต่</td>
-                                                <td>{{ date_format($store.getters.license.first_use) }}</td>
+                                                <td>{{ $store.getters.license.first_use | date_format }}</td>
                                           </tr>
                                           <tr>
                                                 <td>สิ้นสุดการใช้งาน</td>
-                                                <td>{{ date_format($store.getters.license.expire) }}</td>
+                                                <td>{{ $store.getters.license.expire | date_format }}</td>
                                           </tr>
                                           <tr>
                                                 <td>เวลาการใช้งานที่เหลือ</td>

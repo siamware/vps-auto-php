@@ -80,7 +80,7 @@
                                                       </tr>
                                                       <tr>
                                                             <td>เช็คครั้งสุดท้าย</td>
-                                                            <td>{{ date_format(host.last_check) }}</td>
+                                                            <td>{{ host.last_check | date_format }}</td>
                                                       </tr>
                                                 </table>
                                           </div>

@@ -86,12 +86,12 @@
                                                             <div v-show="v.status != 1">
                                                                   <countdown :finish="v.expire" prefix="หมดอายุใน"></countdown>
                                                                   <br>
-                                                                  <small>({{ date_format(v.expire) }})</small>
+                                                                  <small>({{ v.expire | date_format }})</small>
                                                             </div>
                                                             <div class="text-danger" v-show="v.status == 1">
                                                                   <countdown :finish="v.delete" prefix="ลบข้อมูลใน"></countdown>
                                                                   <br>
-                                                                  <small>({{ date_format(v.delete) }})</small>
+                                                                  <small>({{ v.delete | date_format }})</small>
                                                             </div>
                                                       </td>
                                                       <td class="align-middle">

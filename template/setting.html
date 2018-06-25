@@ -82,7 +82,7 @@
                                     </ol>
                               </p>
                               <hr>
-                              <div class="form-group" v-if="$store.getters.user.verify_email && $store.getters.user.verify_phone">
+                              <div class="form-group mg-b-0" v-if="$store.getters.user.verify_email && $store.getters.user.verify_phone">
                                     <label>โค้ดเชิญชวน (โค้ดส่วนลด)</label>
                                     <div class="input-group">
                                           <input type="text" id="refer_code" class="form-control" readonly :value="$store.getters.user.refer_code">
@@ -93,6 +93,11 @@
                                                 </button>
                                           </div>
                                     </div>
+                                    <hr>
+                                    <button class="btn btn-info" @click="newRefer">
+                                          <i class="fa fa-recycle"></i>
+                                          ขอรับโค้ดใหม่!
+                                    </button>
                               </div>
                               <div class="row tx-center" v-else>
                                     <div class="col">

@@ -82,6 +82,8 @@ if (isset($payload['controller']) && isset($payload['action'])) {
                 }else{
                     $j['res'] = $engine->user->confirmPhone($data['phone']);
                 }
+            }elseif ($payload['action'] == "newRefer") {
+                $j['res'] = $engine->user->newRefer();
             }
         } elseif ($payload['controller'] == "billing") {
             if ($payload['action'] == "topup") {

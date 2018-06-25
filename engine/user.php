@@ -9,6 +9,7 @@ class PHUMIN_STUDIO_User {
     public $islogin = false;
     public $verify_email = false;
     public $verify_phone = false;
+    public $refer_code = "";
 
     public function check() {
         global $engine;
@@ -444,5 +445,39 @@ class PHUMIN_STUDIO_User {
             query("UPDATE `{$engine->config['prefix']}user` SET `name` = ?, `company` = ?, `address` = ? WHERE `id` = ?;", [$data['name'], $data['company'], $data['address'], $id]); 
         }
         return $this->check();
+    }
+
+    public function newRefer() {
+        global $engine;
+
+        if ($this->refer_code != "") {
+            $code = $engine->code->getByCode($this->refer_code);
+            $vps_use = query("SELECT * FROM `{$engine->config['prefix']}vps` WHERE `id` = ?;", [$code['id']])->rowCount();
+            if ($vps_use > 0) {
+                $engine->code->disabled($code['id']);
+            } else {
+                query("DELETE FROM `{$engine->config['prefix']}promo_code` WHERE `id` = ?;", [$code['id']]);
+            }
+        }
+        $code = $engine->code->generate("", "refer", [
+            "type" => false,
+            "expire" => [
+                "type" => "time",
+                "expire" => time() + (86400 * 365),
+            ],
+            "user" => [
+                "time" => -1,
+                "oneperone" => false,
+                "used" => [],
+            ]
+        ], [
+            "referer" => $this->id,
+            "discount" => [
+                "type" => "percent",
+                "amount" => 10
+            ]
+        ]);
+        query("UPDATE `{$engine->config['prefix']}user` SET `refer_code` = ? WHERE `id` = ?;", [$code, $this->id]);
+        return ["success" => true, "data" => $this->get()];
     }
 }

@@ -19,25 +19,35 @@ class PHUMIN_STUDIO_Payment {
             ];
       }
 
-      public function history($gateway = null, $owner = null) {
+      public function history($page = 1, $owner = null) {
             global $engine;
 
-            if($gateway === null || $gateway == "all") {
-                  $r = [];
-                  $his = query("SELECT * FROM `{$engine->config['prefix']}payment` ORDER BY `time` DESC;")->fetchAll(PDO::FETCH_ASSOC);
-                  foreach($his as $k => $h){
-                        $r[$k] = $h;
-                        $r[$k]['owner'] = $engine->user->get($h['owner']);
-                  }
-                  return $r;
-            }else{
-                  if($owner === null)
-                        $owner = $engine->user->id;
-                  if($gateway == "truemoney")
-                        $gateway = config('truemoney_gateway');
-                  $his = query("SELECT * FROM `{$engine->config['prefix']}payment` WHERE `owner` = ? AND `payment` = ? ORDER BY `time` DESC;", [$owner, $gateway])->fetchAll(PDO::FETCH_ASSOC);
-                  return $his;
+            $per_page = 7;
+            $page_amount = 0;
+            $page_data = [];
+            $field = "`id`, `amount`, `gateway`, `status`, `time`";
+            if($engine->user->admin) {
+                  $field = "*";
             }
+            if($owner === null) {
+                  $page_amount = query("SELECT {$field} FROM `{$engine->config['prefix']}payment` WHERE `status` = ? ORDER BY `time` DESC;", ['success'])->rowCount();
+                  $page_amount = ceil($page_amount / $per_page);
+
+                  $page_start = ($per_page * $page - $per_page);
+                  $page_data = query("SELECT {$field} FROM `{$engine->config['prefix']}payment` WHERE `status` = ? ORDER BY `time` DESC LIMIT {$page_start}, {$per_page};", ['success'])->fetchAll(PDO::FETCH_ASSOC);
+            } else {
+                  $page_amount = query("SELECT {$field} FROM `{$engine->config['prefix']}payment` WHERE `owner` = ? AND `status` = ? ORDER BY `time` DESC;", [$owner, 'success'])->rowCount();
+                  $page_amount = ceil($page_amount / $per_page);
+
+                  $page_start = ($per_page * $page - $per_page);
+                  $page_data = query("SELECT {$field} FROM `{$engine->config['prefix']}payment` WHERE `owner` = ? AND `status` = ? ORDER BY `time` DESC LIMIT {$page_start}, {$per_page};", [$owner, 'success'])->fetchAll(PDO::FETCH_ASSOC);
+            }
+
+            return [
+                  "page_amount" => $page_amount,
+                  "page_current" => $page,
+                  "page_data" => $page_data,
+            ];
       }
 
       public function truemoney($number) {

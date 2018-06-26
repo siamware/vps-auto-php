@@ -57,7 +57,14 @@ function PHUMIN_STUDIO_HOSTING(callback) {
             }).then(function (res) {
                 //success
                 //console.log(res.body);
-                typeof cb === "function" ? cb(res.body.res) : 0;
+                if (!res.body.success) {
+                    if (res.body.error.code == 403) {
+                        $engine.store.commit('user_logout');
+                        $engine.router.replace('/login');
+                    }
+                } else {
+                    typeof cb === "function" ? cb(res.body.res) : 0;
+                }
             }, function (res) {
                 //error
                 //console.log(res.body);
@@ -856,7 +863,10 @@ function PHUMIN_STUDIO_HOSTING(callback) {
                                 statue: 'checking',
                                 title: '',
                                 text: '',
-                            }
+                            },
+                            history_page_amount: 0,
+                            history_page_current: 0,
+                            history: {},
                         }
                     },
                     computed: {
@@ -866,6 +876,13 @@ function PHUMIN_STUDIO_HOSTING(callback) {
                                 cost += parseFloat(vps.package.price) / vps.package.time * 30;
                             });
                             return cost;
+                        },
+                        history_on_page: function () {
+                            if (typeof this.history[this.history_page_current] == "undefined") {
+                                return [];
+                            } else {
+                                return this.history[this.history_page_current];
+                            }
                         }
                     },
                     methods: {
@@ -1165,9 +1182,43 @@ function PHUMIN_STUDIO_HOSTING(callback) {
                         tw_cancel: function () {
                             clearTimeout(this.process.truewallet);
                             $(".modal-check").modal('hide');
+                        },
+                        history_page: function (page) {
+                            var $self = this;
+                            if (typeof page === "undefined") {
+                                page = 1;
+                            } else if (page === "-1") {
+                                page = this.history_page_current - 1;
+                            } else if(page === "+1") {
+                                page = this.history_page_current + 1;
+                            }
+                            console.log('History page ' + page)
+                            $engine.network.post('billing', 'history', {
+                                page: page,
+                            }, function (res) {
+                                $self.history_page_amount = res.page_amount;
+                                $self.history_page_current = res.page_current;
+                                Vue.set($self.history, res.page_current, res.page_data);
+                            });
+                        },
+                        history_gateway: function (gateway) {
+                            if (gateway == "tmpay" || gateway == "tmtopup") {
+                                return "บัตรทรูมันนี่";
+                            } else if (gateway == "truewallet") {
+                                return "True Wallet";
+                            } else if (gateway == "refer") {
+                                return "โค้ดเชิญชวน";
+                            } else if (gateway == "bank|kbank") {
+                                return "ธ.กสิกร";
+                            } else if (gateway == "bank|scb") {
+                                return "ธ.ไทยพาณิชน์";
+                            } else if (gateway == "bank|ktb") {
+                                return "ธ.กรุงไทย";
+                            }
                         }
                     },
                     mounted: function () {
+                        this.history_page();
                         /*OmiseCard.configure({
                             publicKey: 'pkey_test_5bmh37mqn0ghowhc72u',
                             image: 'https://cdn.omise.co/assets/dashboard/images/omise-logo.png',

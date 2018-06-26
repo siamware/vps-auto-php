@@ -251,12 +251,52 @@
                               </h3>
 
                               <table class="table">
-                                    <tr>
-                                          <td></td>
-                                          <td></td>
-                                          <td></td>
+                                    <tr v-if="history_on_page.length == 0">
+                                          <td class="tx-center">
+                                                ไม่มีรายการเติมเงิน
+                                          </td>
+                                    </tr>
+                                    <tr v-else v-for="h in history_on_page">
+                                          <td>{{ h.time | date_format }}</td>
+                                          <td>{{ history_gateway(h.gateway) }}</td>
+                                          <td>{{ h.amount }}</td>
                                     </tr>
                               </table>
+                              <div class="pagination-wrapper justify-content-between">
+                                    <ul class="pagination mg-b-0">
+                                          <li class="page-item" v-if="history_page_current > 1">
+                                                <a class="page-link" @click="history_page('-1')">
+                                                      <i class="fa fa-angle-left"></i>
+                                                </a>
+                                          </li>
+                                    </ul>
+
+                                    <ul class="pagination mg-b-0">
+                                          <li class="page-item disabled" v-if="history_page_current - 3 > 0">
+                                                <span class="page-link">...</span>
+                                          </li>
+                                          <li v-for="i in 2" v-if="history_page_current - (3 - i) > 0" :class="['page-item', {'active': history_page_current == history_page_current - (3 - i)}]">
+                                                <a class="page-link" @click="history_page(history_page_current - (3 - i))">{{ history_page_current - (3 - i) }}</a>
+                                          </li>
+                                          <li :class="['page-item', 'active']">
+                                                <a class="page-link" @click="false">{{ history_page_current }}</a>
+                                          </li>
+                                          <li v-for="i in 2" v-if="i + history_page_current <= history_page_amount" :class="['page-item', {'active': history_page_current == i + history_page_current}]">
+                                                <a class="page-link" @click="history_page(i + history_page_current)">{{ i + history_page_current }}</a>
+                                          </li>
+                                          <li class="page-item disabled" v-if="history_page_current + 2 < history_page_amount">
+                                                <span class="page-link">...</span>
+                                          </li>
+                                    </ul>
+
+                                    <ul class="pagination mg-b-0">
+                                          <li class="page-item" v-if="history_page_current < history_page_amount">
+                                                <a class="page-link" @click="history_page('+1')">
+                                                      <i class="fa fa-angle-right"></i>
+                                                </a>
+                                          </li>
+                                    </ul>
+                              </div>
                         </div>
                         <!-- card-body -->
                   </div>

@@ -64,7 +64,7 @@ if (isset($payload['controller']) && isset($payload['action'])) {
     }
 
     ///////////////////////////// User /////////////////////////////
-    if($engine->user->islogin) {
+    if($engine->user->islogin && $engine->user->id != 0) {
         if ($payload['controller'] == "user") {
             if ($payload['action'] == "logout") {
                 $j['res'] = $engine->user->logout();
@@ -108,6 +108,12 @@ if (isset($payload['controller']) && isset($payload['action'])) {
                             'error' => 'transaction',
                         ];
                     }
+                }
+            } elseif ($payload['action'] == "history") {
+                if(isset($data['page'])) {
+                    $j['res'] = $engine->payment->history($data['page'], isset($data['all']) ? null : $engine->user->id);
+                } else {
+                    $j['res'] = $engine->payment->history();
                 }
             }
         } elseif ($payload['controller'] == "support") {
@@ -188,6 +194,12 @@ if (isset($payload['controller']) && isset($payload['action'])) {
                 $j['res'] = $engine->code->check($data['type'], $data['code'], isset($data['option']) ? $data['option'] : []);
             }
         }
+    } else {
+        $j['success'] = false;
+        $j['error'] = [
+            'message' => 'Session timeout',
+            'code' => 403,
+        ];
     }
     
     ///////////////////////////// ADMIN /////////////////////////////
@@ -247,7 +259,7 @@ if (isset($payload['controller']) && isset($payload['action'])) {
     }
 }
 
-if ($j['res'] === [] && $j['success'] == false) {
+if ($j['res'] === [] && $j['success'] == false && !isset($j['error'])) {
     $j['error'] = [
         'message' => 'Unknow request',
         'code' => 404,

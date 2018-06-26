@@ -115,12 +115,14 @@ class PHUMIN_STUDIO_VPS {
             $ip = [];
             if($host_type == "a") {
                   $type = "xen";
-                  $ip = query("SELECT * FROM `{$engine->config['prefix']}ip` WHERE `host` = ? AND `useby` = ?;", [$host, 0])->fetch(PDO::FETCH_ASSOC);
+                  $ip = query("SELECT * FROM `{$engine->config['prefix']}ip` WHERE `host` = ? AND `useby` = ? LIMIT 1;", [$host, 0])->fetch(PDO::FETCH_ASSOC);
                   $host = query("SELECT * FROM `{$engine->config['prefix']}xen_host` WHERE `id` = ?;", [$host])->fetch(PDO::FETCH_ASSOC);
                   $template = query("SELECT * FROM `{$engine->config['prefix']}xen_template` WHERE `id` = ?;", [$template])->fetch(PDO::FETCH_ASSOC);
             } else {
                   return false;
             }
+            // Take ip
+            query("UPDATE `{$engine->config['prefix']}ip` SET `useby` = ? WHERE `id` = ?;", [-1, $ip['id']]);
 
             // Create vm
             $res = $engine->xenserver->clone_vm($engine->user, $package, $host, $template, $ip);

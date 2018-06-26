@@ -83,8 +83,8 @@
                               </p>
                               <hr>
                               <div class="form-group mg-b-0" v-if="$store.getters.user.verify_email && $store.getters.user.verify_phone">
-                                    <label>โค้ดเชิญชวน (โค้ดส่วนลด)</label>
-                                    <div class="input-group">
+                                    <label>โค้ดเชิญชวน (โค้ดส่วนลด 10%)</label>
+                                    <div class="input-group" v-if="$store.getters.user.refer_code != ''">
                                           <input type="text" id="refer_code" class="form-control" readonly :value="$store.getters.user.refer_code">
                                           <div class="input-group-append">
                                                 <button class="btn btn-teal" @click="copyRefer">

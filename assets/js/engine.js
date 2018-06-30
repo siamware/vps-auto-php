@@ -29,6 +29,15 @@ function PHUMIN_STUDIO_HOSTING(callback) {
     this.setup = 0;
     this.max_step = 3;
     this.setup_watcher = null;
+    this.payment_gateway = {
+        "tmtopup": "บัตรทรูมันนี่",
+        "tmpay": "บัตรทรูมันนี่",
+        "truewallet": "True Wallet",
+        "refer": "โค้ดเชิญชวน",
+        "bank|kbank": "ธ.กสิกรไทย",
+        "bank|scb": "ธ.ไทยพาณิชน์",
+        "bank|ktb": "ธ.กรุงไทย",
+    };
 
     this.store = createStore();
 
@@ -57,14 +66,21 @@ function PHUMIN_STUDIO_HOSTING(callback) {
             }).then(function (res) {
                 //success
                 //console.log(res.body);
-                if (!res.body.success) {
+                /*if (!res.body.success) {
                     if (res.body.error.code == 403) {
                         $engine.store.commit('user_logout');
                         $engine.router.replace('/login');
                     }
                 } else {
                     typeof cb === "function" ? cb(res.body.res) : 0;
-                }
+                }*/
+                res.body.event.forEach(function (e) {
+                    if(e == "logout") {
+                        $engine.store.commit('user_logout');
+                        $engine.router.replace('/login');
+                    }
+                });
+                typeof cb === "function" ? cb(res.body.res) : 0;
             }, function (res) {
                 //error
                 //console.log(res.body);
@@ -122,7 +138,13 @@ function PHUMIN_STUDIO_HOSTING(callback) {
 
                 // Preset components
                 Vue.component('countdown', {
-                    props: ['finish', 'prefix'],
+                    props: {
+                        finish: [String, Number],
+                        prefix: {
+                            type: String,
+                            default: "",
+                        }
+                    },
                     template: "<span>{{ prefix }} {{ days }} {{ hours }}:{{ minutes }}:{{ seconds }} ชั่วโมง</span>",
                     data: function () {
                         return {
@@ -190,6 +212,89 @@ function PHUMIN_STUDIO_HOSTING(callback) {
                         },
                         days: function () {
                             this.diffDay = Math.trunc((this.date - this.now) / 60 / 60 / 24);
+                            if (this.diffDay <= 0)
+                                return '';
+                            else
+                                return this.twoDigits(this.diffDay) + ' วัน';
+                        }
+                    }
+                });
+
+                Vue.component('countup', {
+                    props: {
+                        start: [String, Number],
+                        prefix: {
+                            type: String,
+                            default: "",
+                        }
+                    },
+                    template: "<span>{{ prefix }} {{ days }} {{ hours }}:{{ minutes }}:{{ seconds }} ชั่วโมง</span>",
+                    data: function () {
+                        return {
+                            now: null,
+                            date: null,
+                            timer: null,
+                            diffSec: null,
+                            diffMin: null,
+                            diffHour: null,
+                            diffDay: null,
+                            runTimer: 'true',
+                            infinite: 'false',
+                            loaded: 'false',
+                        };
+                    },
+                    watch: {
+                        start(value) {
+                            this.date = Math.trunc(value);
+                        },
+                    },
+                    mounted: function () {
+                        var $self = this;
+                        this.date = Math.trunc(this.start);
+                        this.now = Math.trunc(Date.now() / 1000);
+                        this.timer = setInterval(function () {
+                            $self.runTimer = 'true';
+                            $self.now = Math.trunc(Date.now() / 1000);
+                            $self.loaded = 'true';
+                        }, 500);
+                    },
+                    methods: {
+                        stopTimer: function () {
+                            clearInterval(this.timer);
+                            this.runTimer = 'false';
+                        },
+                        twoDigits: function (value) {
+                            if (value.toString().length <= 1) {
+                                return '0' + value.toString();
+                            }
+                            return value.toString();
+                        }
+                    },
+                    computed: {
+                        seconds: function () {
+                            this.diffSec = Math.trunc(this.now - this.date) % 60;
+                            if (this.diffSec < 0) {
+                                this.diffSec = 0;
+                                this.stopTimer();
+                            }
+                            return this.twoDigits(this.diffSec);
+                        },
+                        minutes: function () {
+                            this.diffMin = Math.trunc((this.now - this.date) / 60) % 60;
+                            if (this.diffMin < 0) {
+                                this.diffMin = 0;
+                            }
+                            return this.twoDigits(this.diffMin);
+                        },
+                        hours: function () {
+                            this.diffHour = Math.trunc((this.now - this.date) / 60 / 60) % 24;
+                            if (this.diffHour < 0) {
+                                this.diffHour = 0;
+                            }
+                            return this.twoDigits(this.diffHour);
+                        },
+                        days: function () {
+                            this.diffDay = Math.trunc((this.now - this.date) / 60 / 60 / 24);
                             if (this.diffDay <= 0)
                                 return '';
                             else
@@ -345,16 +450,20 @@ function PHUMIN_STUDIO_HOSTING(callback) {
                         },
                         available_package: function (p) {
                             var available = false;
-                            if (this.$store.getters.host) {
-                                this.$store.getters.host.forEach(function (host) {
-                                    //console.log(host.ram_free, p.ram * 1024 * 1024 * 1024, host.ram_free > p.ram * 1024 * 1024 * 1024)
-                                    if (host.ram_free > p.ram * 1024 * 1024 * 1024) {
-                                        available = true;
-                                    }
-                                });
-                                //console.log(p.soon, (new Date()).getTime() / 1000, new Date(p.soon * 1000))
+                            if(p.soon != -1) {
+                                return false;
+                            } else {
+                                if (this.$store.getters.host) {
+                                    this.$store.getters.host.forEach(function (host) {
+                                        //console.log(host.ram_free, p.ram * 1024 * 1024 * 1024, host.ram_free > p.ram * 1024 * 1024 * 1024)
+                                        if (host.ram_free >= p.ram * 1024 * 1024 * 1024) {
+                                            available = true;
+                                        }
+                                    });
+                                    //console.log(p.soon, (new Date()).getTime() / 1000, new Date(p.soon * 1000))
+                                }
+                                return available;
                             }
-                            return available;
                         },
                         create: function () {
                             this.step = 3;
@@ -1189,12 +1298,12 @@ function PHUMIN_STUDIO_HOSTING(callback) {
                                 page = 1;
                             } else if (page === "-1") {
                                 page = this.history_page_current - 1;
-                            } else if(page === "+1") {
+                            } else if (page === "+1") {
                                 page = this.history_page_current + 1;
                             }
-                            console.log('History page ' + page)
                             $engine.network.post('billing', 'history', {
                                 page: page,
+                                per_page: 7,
                             }, function (res) {
                                 $self.history_page_amount = res.page_amount;
                                 $self.history_page_current = res.page_current;
@@ -1202,18 +1311,10 @@ function PHUMIN_STUDIO_HOSTING(callback) {
                             });
                         },
                         history_gateway: function (gateway) {
-                            if (gateway == "tmpay" || gateway == "tmtopup") {
-                                return "บัตรทรูมันนี่";
-                            } else if (gateway == "truewallet") {
-                                return "True Wallet";
-                            } else if (gateway == "refer") {
-                                return "โค้ดเชิญชวน";
-                            } else if (gateway == "bank|kbank") {
-                                return "ธ.กสิกร";
-                            } else if (gateway == "bank|scb") {
-                                return "ธ.ไทยพาณิชน์";
-                            } else if (gateway == "bank|ktb") {
-                                return "ธ.กรุงไทย";
+                            if (typeof $engine.payment_gateway[gateway] != "undefined") {
+                                return $engine.payment_gateway[gateway];
+                            } else {
+                                return "ไม่รู้จัก";
                             }
                         }
                     },
@@ -1256,6 +1357,165 @@ function PHUMIN_STUDIO_HOSTING(callback) {
                         OmiseCard.attach();
                         */
                     },
+                },
+            },
+            {
+                name: 'admin-dashboard',
+                path: '/admin',
+                component: {
+                    template: $engine.template.components['admin-dashboard'].template,
+                    data: function () {
+                        return {
+                            history: {},
+                        };
+                    },
+                    methods: {},
+                    mounted: function () {}
+                },
+            },
+            {
+                name: 'admin-accounting-payment',
+                path: '/admin/accounting-payment',
+                component: {
+                    template: $engine.template.components['admin-accounting-payment'].template,
+                    data: function () {
+                        return {
+                            history_page_amount: 0,
+                            history_page_current: 0,
+                            history: {},
+                        };
+                    },
+                    components: {
+                        'line-chart': {
+                            extends: VueChartJs.Line,
+                            mounted: function () {
+                                var $self = this;
+                                $engine.network.post('payment', 'summary', {
+                                }, function (res) {
+                                    $self.renderChart({
+                                        labels: res.label,
+                                        datasets: [{
+                                            label: 'รายได้ต่อเดือน',
+                                            backgroundColor: '#1b84e7',
+                                            data: res.data,
+                                            fill: false,
+                                        }],
+                                    }, {
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                    })
+                                });
+                            }
+                        },
+                    },
+                    methods: {
+                        history_page: function (page) {
+                            var $self = this;
+                            if (typeof page === "undefined") {
+                                page = 1;
+                            } else if (page === "-1") {
+                                page = this.history_page_current - 1;
+                            } else if (page === "+1") {
+                                page = this.history_page_current + 1;
+                            }
+                            $engine.network.post('billing', 'history', {
+                                page: page,
+                                per_page: 25,
+                                all: true,
+                            }, function (res) {
+                                $self.history_page_amount = res.page_amount;
+                                $self.history_page_current = res.page_current;
+                                Vue.set($self.history, res.page_current, res.page_data);
+                            });
+                        },
+                        history_gateway: function (gateway) {
+                            if (typeof $engine.payment_gateway[gateway] != "undefined") {
+                                return $engine.payment_gateway[gateway];
+                            } else {
+                                return "ไม่รู้จัก";
+                            }
+                        }
+                    },
+                    computed: {
+                        history_on_page: function () {
+                            if (typeof this.history[this.history_page_current] == "undefined") {
+                                return [];
+                            } else {
+                                return this.history[this.history_page_current];
+                            }
+                        }
+                    },
+                    mounted: function () {
+                        this.history_page();
+                    }
+                },
+            },
+            {
+                name: 'admin-accounting-invoice',
+                path: '/admin/accounting-invoice',
+                component: {
+                    template: $engine.template.components['admin-accounting-invoice'].template,
+                    data: function () {
+                        return {
+                            history_page_amount: 0,
+                            history_page_current: 0,
+                            history: {},
+                        };
+                    },
+                    methods: {
+                        history_page: function (page) {
+                            var $self = this;
+                            if (typeof page === "undefined") {
+                                page = 1;
+                            } else if (page === "-1") {
+                                page = this.history_page_current - 1;
+                            } else if (page === "+1") {
+                                page = this.history_page_current + 1;
+                            }
+                            $engine.network.post('billing', 'invoice', {
+                                page: page,
+                                per_page: 25,
+                                all: true,
+                            }, function (res) {
+                                $self.history_page_amount = res.page_amount;
+                                $self.history_page_current = res.page_current;
+                                Vue.set($self.history, res.page_current, res.page_data);
+                            });
+                        },
+                        history_gateway: function (gateway) {
+                            if (typeof $engine.payment_gateway[gateway] != "undefined") {
+                                return $engine.payment_gateway[gateway];
+                            } else {
+                                return "ไม่รู้จัก";
+                            }
+                        },
+                        promotion_calculate: function (package, promotion) {
+                            var discount = false;
+                            if (promotion.type == "refer") {
+                                discount = promotion.promotion.discount;
+                            } else if (promotion.type == "discount") {
+                                discount = promotion.promotion;
+                            }
+
+                            if (discount.type == "percent") {
+                                return package.price * (1 - (discount.amount / 100));
+                            } else if (discount.type == "amount") {
+                                return package.price - discount.amount;
+                            }
+                        }
+                    },
+                    computed: {
+                        history_on_page: function () {
+                            if (typeof this.history[this.history_page_current] == "undefined") {
+                                return [];
+                            } else {
+                                return this.history[this.history_page_current];
+                            }
+                        }
+                    },
+                    mounted: function () {
+                        this.history_page();
+                    }
                 },
             },
             {
@@ -1597,7 +1857,6 @@ function PHUMIN_STUDIO_HOSTING(callback) {
                             $engine.network.post('host', 'remove_vm', {
                                 id: id,
                             }, function (res) {
-                                console.log(res)
                                 $self.get_vm();
                             });
                         },

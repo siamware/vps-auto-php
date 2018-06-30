@@ -76,7 +76,6 @@
                                                       <button class="btn btn-primary" type="button" @click="check" :disabled="loading">ตรวจสอบสถานะ</button>
                                                       <span :class="[{'tx-danger': message_mode == 'error'}, {'tx-success': message_mode == 'success'}]" v-html="message"></span>
                                                 </div>
-                                                <pre>{{ $store.getters.license }}</pre>
                                           </div>
                                           <div class="col-md-5" v-show="step == 2">
                                                 <h3>ตรวจสอบการใช้งาน</h3>

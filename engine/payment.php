@@ -19,28 +19,113 @@ class PHUMIN_STUDIO_Payment {
             ];
       }
 
-      public function history($page = 1, $owner = null) {
+      public function history_invoice($page = 1, $per_page = 7, $owner = null) {
             global $engine;
 
-            $per_page = 7;
             $page_amount = 0;
             $page_data = [];
-            $field = "`id`, `amount`, `gateway`, `status`, `time`";
+            if($owner === null) {
+                  $page_amount = query("SELECT * FROM `{$engine->config['prefix']}invoice` ORDER BY `date` DESC;")->rowCount();
+                  $page_amount = ceil($page_amount / $per_page);
+
+                  $page_start = ($per_page * $page - $per_page);
+                  $is = query("SELECT * FROM `{$engine->config['prefix']}invoice` ORDER BY `date` DESC LIMIT {$page_start}, {$per_page};")->fetchAll(PDO::FETCH_ASSOC);
+                  foreach($is as $i) {
+                        $page_data[] = [
+                              "id" => $i['id'],
+                              "owner" => json_decode($i['owner_detail'], true),
+                              "product" => json_decode($i['product'], true),
+                              "time" => $i['date'],
+                        ];
+                  }
+            } else {
+                  $page_amount = query("SELECT * FROM `{$engine->config['prefix']}invoice` WHERE `owner` = ? ORDER BY `date` DESC;", ['success'])->rowCount();
+                  $page_amount = ceil($page_amount / $per_page);
+
+                  $page_start = ($per_page * $page - $per_page);
+                  $is = query("SELECT * FROM `{$engine->config['prefix']}invoice` WHERE `owner` = ? ORDER BY `date` DESC LIMIT {$page_start}, {$per_page};", [$owner])->fetchAll(PDO::FETCH_ASSOC);
+                  foreach($is as $i) {
+                        $page_data[] = [
+                              "id" => $i['id'],
+                              "owner" => json_decode($i['owner_detail'], true),
+                              "product" => json_decode($i['product'], true),
+                              "time" => $i['date'],
+                        ];
+                  }
+            }
+
+            return [
+                  "page_amount" => $page_amount,
+                  "page_current" => $page,
+                  "page_data" => $page_data,
+            ];
+      }
+
+      public function summary_month() {
+            global $engine;
+
+            $hs = query("SELECT 
+                  MONTH(FROM_UNIXTIME(`time`)) as `month`, 
+                  YEAR(FROM_UNIXTIME(`time`)) as `year`, 
+                  SUM(`amount`) as `total`
+                  FROM `{$engine->config['prefix']}payment`
+                  WHERE `status` = ? AND `gateway` <> ?
+                  GROUP BY 1,2;", ['success', 'refer'])->fetchAll(PDO::FETCH_ASSOC);
+            $current_month = date('m');
+            $current_year = date('Y');
+            $month = [1 => 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+            $data = [
+                  "label" => [],
+                  "data" => [],
+            ];
+
+            for($i = 1; $i <= 12; $i++) {
+                  if($i <= $current_month) {
+                        $data['label'][] = $month[$i] . " " . $current_year;
+                        $amount = 0;
+                        foreach($hs as $h) {
+                              if($h['month'] == $i && $h['year'] == $current_year) {
+                                    $amount = $h['total'];
+                                    break;
+                              }
+                        }
+                        $data['data'][] = (float) $amount;
+                  } else {
+                        $data['label'][] = $month[$i] . " " . ($current_year - 1);
+                        $amount = 0;
+                        foreach($hs as $h) {
+                              if($h['month'] == $i && $h['year'] == $current_year - 1) {
+                                    $amount = $h['total'];
+                                    break;
+                              }
+                        }
+                        $data['data'][] = (float) $amount;
+                  }
+            }
+            return $data;
+      }
+
+      public function history($page = 1, $per_page = 7, $owner = null) {
+            global $engine;
+
+            $page_amount = 0;
+            $page_data = [];
+            $field = "`p`.`id`, `p`.`amount`, `p`.`gateway`, `p`.`status`, `p`.`time`";
             if($engine->user->admin) {
-                  $field = "*";
+                  $field = "`p`.*";
             }
             if($owner === null) {
-                  $page_amount = query("SELECT {$field} FROM `{$engine->config['prefix']}payment` WHERE `status` = ? ORDER BY `time` DESC;", ['success'])->rowCount();
+                  $page_amount = query("SELECT {$field} FROM `{$engine->config['prefix']}payment` AS `p` WHERE `p`.`status` = ? ORDER BY `p`.`time` DESC;", ['success'])->rowCount();
                   $page_amount = ceil($page_amount / $per_page);
 
                   $page_start = ($per_page * $page - $per_page);
-                  $page_data = query("SELECT {$field} FROM `{$engine->config['prefix']}payment` WHERE `status` = ? ORDER BY `time` DESC LIMIT {$page_start}, {$per_page};", ['success'])->fetchAll(PDO::FETCH_ASSOC);
+                  $page_data = query("SELECT {$field}, `u`.`id`, `u`.`email`, `u`.`name`, `u`.`phone`, `u`.`address`, `u`.`company`, `u`.`verify_email`, `u`.`verify_phone` FROM `{$engine->config['prefix']}payment` AS `p` JOIN `{$engine->config['prefix']}user` AS `u` ON `p`.`owner` = `u`.`id` WHERE `p`.`status` = ? ORDER BY `p`.`time` DESC LIMIT {$page_start}, {$per_page};", ['success'])->fetchAll(PDO::FETCH_ASSOC);
             } else {
-                  $page_amount = query("SELECT {$field} FROM `{$engine->config['prefix']}payment` WHERE `owner` = ? AND `status` = ? ORDER BY `time` DESC;", [$owner, 'success'])->rowCount();
+                  $page_amount = query("SELECT {$field} FROM `{$engine->config['prefix']}payment` AS `p` WHERE `p`.`owner` = ? AND `p`.`status` = ? ORDER BY `p`.`time` DESC;", [$owner, 'success'])->rowCount();
                   $page_amount = ceil($page_amount / $per_page);
 
                   $page_start = ($per_page * $page - $per_page);
-                  $page_data = query("SELECT {$field} FROM `{$engine->config['prefix']}payment` WHERE `owner` = ? AND `status` = ? ORDER BY `time` DESC LIMIT {$page_start}, {$per_page};", [$owner, 'success'])->fetchAll(PDO::FETCH_ASSOC);
+                  $page_data = query("SELECT {$field}, `u`.`id`, `u`.`email`, `u`.`name`, `u`.`phone`, `u`.`address`, `u`.`company`, `u`.`verify_email`, `u`.`verify_phone` FROM `{$engine->config['prefix']}payment` AS `p` JOIN `{$engine->config['prefix']}user` AS `u` ON `p`.`owner` = `u`.`id` WHERE `p`.`owner` = ? AND `p`.`status` = ? ORDER BY `p`.`time` DESC LIMIT {$page_start}, {$per_page};", [$owner, 'success'])->fetchAll(PDO::FETCH_ASSOC);
             }
 
             return [

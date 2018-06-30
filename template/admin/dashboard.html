@@ -1,0 +1,19 @@
+<div>
+      <div v-if="$store.getters.user.admin">
+            <div class="slim-pageheader">
+                  <ol class="breadcrumb slim-breadcrumb">
+                        <li class="breadcrumb-item">
+                              Home
+                        </li>
+                        <li aria-current="page" class="breadcrumb-item active">Admin Panel</li>
+                  </ol>
+                  <h6 class="slim-pagetitle">ภาพรวม</h6>
+            </div>
+            <div class="row row-sm">
+                  <div class="col-lg">
+                        
+                  </div>
+            </div>
+      </div>
+      <error-404 v-else></error-404>
+</div>

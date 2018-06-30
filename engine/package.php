@@ -24,22 +24,32 @@ class PHUMIN_STUDIO_Package {
       public function getSoonest($package) {
             global $engine;
 
-            $vs = query("SELECT
-            `p`.`cpu`,
-            `p`.`ram`,
-            `p`.`disk`,
-            `v`.`expire`,
-            `v`.`delete`
-            FROM `{$engine->config['prefix']}vps` AS `v` JOIN `{$engine->config['prefix']}package` AS `p`
-            ON `v`.`package` = `p`.`id`
-            ORDER BY `v`.`expire` ASC")->fetchAll(PDO::FETCH_ASSOC);
-
             $host = $engine->host->get(true);
             $soon_time = -1;
             foreach($host as $h) {
+
+                  $vs = query("SELECT
+                  `p`.`cpu`,
+                  `p`.`ram`,
+                  `p`.`disk`,
+                  `v`.`host`,
+                  `v`.`expire`,
+                  `v`.`delete`
+                  FROM `{$engine->config['prefix']}vps` AS `v` JOIN `{$engine->config['prefix']}package` AS `p`
+                  ON `v`.`package` = `p`.`id`
+                  WHERE `v`.`host` = ?
+                  ORDER BY `v`.`expire` ASC", [$h['id']])->fetchAll(PDO::FETCH_ASSOC);
+                  
+                  // Check current free resources
+                  if($h['ram_free'] >= $package['ram'] * 1024 * 1024 * 1024) {
+                        $soon_time = -1;
+                        break;
+                  }
+
+                  // Check soon free resources
                   foreach($vs as $v) {
                         $h['ram_free'] += $v['ram'] * 1024 * 1024 * 1024;
-                        if($h['ram_free'] >= $package['ram'] * 1024 * 1024 * 1024) {
+                        if($h['ram_free'] < $package['ram'] * 1024 * 1024 * 1024) {
                               if($v['delete'] == "") {
                                     $expire = $v['expire'] + config('keep_before_remove');
                                     if($soon_time == -1 || $soon_time > $expire) {
@@ -49,6 +59,22 @@ class PHUMIN_STUDIO_Package {
                                     if($soon_time == -1 || $soon_time > $v['delete']) {
                                           $soon_time = $v['delete'];
                                     }
+                              }
+                        }
+                  }
+
+                  // Check fastest ip that will be available
+                  $ip_available = query("SELECT * FROM `{$engine->config['prefix']}ip` WHERE `host` = ? AND `useby` = ?", [$h['id'], 0])->rowCount();
+                  if($ip_available == 0) {
+                        $v = $vs[0];
+                        if($v['delete'] == "") {
+                              $expire = $v['expire'] + config('keep_before_remove');
+                              if($soon_time == -1 || $soon_time > $expire) {
+                                    $soon_time = $expire;
+                              }
+                        }else{
+                              if($soon_time == -1 || $soon_time > $v['delete']) {
+                                    $soon_time = $v['delete'];
                               }
                         }
                   }

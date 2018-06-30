@@ -68,7 +68,7 @@ class PHUMIN_STUDIO_Xenserver {
                   'hypervisor' => 'xenserver',
                   'license_key' => config('license_key'),
                   'api_token' => $host['api_token'],
-                  'name' => "ลูกค้า #{$engine->user->id} ({$ip['ip']})",
+                  'name' => "{$ip['ip']} (ลูกค้า #{$engine->user->id})",
                   'template' => $template['opaqueRef'],
                   'cpu' => $package['cpu'],
                   'ram' => $package['ram'],
@@ -184,7 +184,30 @@ class PHUMIN_STUDIO_Xenserver {
                   'subnetmask' => $subnet,
                   'gateway' => $gateway,
             ]);
-            return $r;
+            return true;
+      }
+
+      public function ip_register($host, $ip) {
+            global $engine;
+
+            $r = $this->request('ip_register', [
+                  'hypervisor' => 'xenserver',
+                  'license_key' => config('license_key'),
+                  'api_token' => $host['api_token'],
+                  'ip' => $ip,
+            ]);
+            return true;
+      }
+
+      public function ip_remove($host, $ip) {
+            global $engine;
+
+            $r = $this->request('ip_remove', [
+                  'hypervisor' => 'xenserver',
+                  'license_key' => config('license_key'),
+                  'api_token' => $host['api_token'],
+                  'ip' => $ip,
+            ]);
             return true;
       }
 

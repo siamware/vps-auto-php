@@ -1,0 +1,138 @@
+<div>
+      <div v-if="$store.getters.user.admin">
+            <div class="slim-pageheader">
+                  <ol class="breadcrumb slim-breadcrumb">
+                        <li class="breadcrumb-item">
+                              Home
+                        </li>
+                        <li class="breadcrumb-item">
+                              <router-link to="/admin">Admin Panel</router-link>
+                        </li>
+                        <li aria-current="page" class="breadcrumb-item active">ใบเสร็จรับเงิน</li>
+                  </ol>
+                  <h6 class="slim-pagetitle">ใบเสร็จรับเงิน</h6>
+            </div>
+            <div class="row row-sm">
+                  <div class="col-lg" v-if="typeof history[history_page_current] == 'undefined'">
+                        <div class="card">
+                              <div class="card-body">
+                                    <div class="row">
+                                          <div class="col-12">
+                                                <div class="sk-circle">
+                                                      <div class="sk-circle1 sk-child"></div>
+                                                      <div class="sk-circle2 sk-child"></div>
+                                                      <div class="sk-circle3 sk-child"></div>
+                                                      <div class="sk-circle4 sk-child"></div>
+                                                      <div class="sk-circle5 sk-child"></div>
+                                                      <div class="sk-circle6 sk-child"></div>
+                                                      <div class="sk-circle7 sk-child"></div>
+                                                      <div class="sk-circle8 sk-child"></div>
+                                                      <div class="sk-circle9 sk-child"></div>
+                                                      <div class="sk-circle10 sk-child"></div>
+                                                      <div class="sk-circle11 sk-child"></div>
+                                                      <div class="sk-circle12 sk-child"></div>
+                                                </div>
+                                          </div>
+                                    </div>
+                              </div>
+                        </div>
+                  </div>
+                  <div class="col-lg" v-else>
+                        <div class="card mg-t-15">
+                              <div class="card-body">
+                                    <h3 class="card-title tx-dark tx-medium mg-b-10">
+                                          ใบเสร็จรับเงิน
+                                    </h3>
+
+                                    <table class="table">
+                                          <thead>
+                                                <tr>
+                                                      <th>เวลา</th>
+                                                      <th>โดย</th>
+                                                      <th>สินค้า</th>
+                                                </tr>
+                                          </thead>
+                                          <tbody>
+                                                <tr v-if="history_on_page.length == 0">
+                                                      <td class="tx-center">
+                                                            ไม่มีรายการเติมเงิน
+                                                      </td>
+                                                </tr>
+                                                <tr v-else v-for="h in history_on_page">
+                                                      <td>{{ h.time | date_format }}</td>
+                                                      <td>
+                                                            (ID : {{ h.owner.id }}) {{ h.owner.name }}
+                                                            <br>
+                                                            <small>
+                                                                  <i :class="['fa' ,'fa-envelope']"></i>
+                                                                  {{ h.owner.email }} &nbsp;&nbsp;
+                                                                  <i :class="['fa', 'fa-phone']"></i>
+                                                                  {{ h.owner.phone }}
+                                                            </small>
+                                                      </td>
+                                                      <td>
+                                                            <div v-for="p in h.product" class="card card-body">
+                                                                        <b>{{ p.type == 'expand' ? 'ต่ออายุ' : 'เริ่มเช่า' }} {{ p.name }} (ID: {{ p.id }})</b>
+                                                                        <small>
+                                                                              Package: {{ p.package.name }}
+                                                                              (CPU: {{ p.package.cpu }} - 
+                                                                              RAMs: {{ p.package.ram }} - 
+                                                                              Disk: {{ p.package.disk }})
+                                                                        </small>
+                                                                        <small  v-if="p.promotion && p.promotion.id != 0 && p.promotion.type == 'refer'">
+                                                                                    วันใช้งาน: {{ p.package.time }} วัน
+                                                                                    ราคา: <del>{{ p.package.price }}</del> {{ promotion_calculate(p.package, p.promotion).toFixed(2) }} บาท
+                                                                                    โค้ดส่วนลด: {{ p.promotion.code }}
+                                                                        </small>
+                                                                        <small v-else>
+                                                                                    วันใช้งาน: {{ p.package.time }} วัน
+                                                                                    ราคา: {{ p.package.price }} บาท
+                                                                        </small>
+                                                            </div>
+                                                      </td>
+                                                </tr>
+                                          </tbody>
+                                    </table>
+                                    <div class="pagination-wrapper justify-content-between">
+                                          <ul class="pagination mg-b-0">
+                                                <li class="page-item" v-if="history_page_current > 1">
+                                                      <a class="page-link" @click="history_page('-1')">
+                                                            <i class="fa fa-angle-left"></i>
+                                                      </a>
+                                                </li>
+                                          </ul>
+
+                                          <ul class="pagination mg-b-0">
+                                                <li class="page-item disabled" v-if="history_page_current - 3 > 0">
+                                                      <span class="page-link">...</span>
+                                                </li>
+                                                <li v-for="i in 2" v-if="history_page_current - (3 - i) > 0" :class="['page-item', {'active': history_page_current == history_page_current - (3 - i)}]">
+                                                      <a class="page-link" @click="history_page(history_page_current - (3 - i))">{{ history_page_current - (3 - i) }}</a>
+                                                </li>
+                                                <li :class="['page-item', 'active']">
+                                                      <a class="page-link" @click="false">{{ history_page_current }}</a>
+                                                </li>
+                                                <li v-for="i in 2" v-if="i + history_page_current <= history_page_amount" :class="['page-item', {'active': history_page_current == i + history_page_current}]">
+                                                      <a class="page-link" @click="history_page(i + history_page_current)">{{ i + history_page_current }}</a>
+                                                </li>
+                                                <li class="page-item disabled" v-if="history_page_current + 2 < history_page_amount">
+                                                      <span class="page-link">...</span>
+                                                </li>
+                                          </ul>
+
+                                          <ul class="pagination mg-b-0">
+                                                <li class="page-item" v-if="history_page_current < history_page_amount">
+                                                      <a class="page-link" @click="history_page('+1')">
+                                                            <i class="fa fa-angle-right"></i>
+                                                      </a>
+                                                </li>
+                                          </ul>
+                                    </div>
+                              </div>
+                              <!-- card-body -->
+                        </div>
+                  </div>
+            </div>
+      </div>
+      <error-404 v-else></error-404>
+</div>

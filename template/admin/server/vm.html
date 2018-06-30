@@ -65,6 +65,7 @@
                                           <thead>
                                                 <tr>
                                                       <th>VPS ({{ vms.length }})</th>
+                                                      <th>ระยะเวลา</th>
                                                       <th>วันหมดอายุ</th>
                                                       <th>เจ้าของ</th>
                                                       <th>ตัวเลือก</th>
@@ -81,6 +82,11 @@
                                                                   RAMs: {{ v.package.ram }} - 
                                                                   Disk: {{ v.package.disk }})
                                                             </small>
+                                                      </td>
+                                                      <td class="align-middle">
+                                                            <countup :start="v.created"></countup>
+                                                            <br>
+                                                            <small>({{ v.created | date_format }})</small>
                                                       </td>
                                                       <td class="align-middle">
                                                             <div v-show="v.status != 1">

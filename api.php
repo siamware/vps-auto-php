@@ -24,6 +24,7 @@ if (isset($payload['controller']) && isset($payload['action'])) {
     ///////////////////////////// Common /////////////////////////////
     if ($payload['controller'] == "template") {
         if ($payload['action'] == "load") {
+            $j['success'] = true;
             $j['res'] = $engine->template->load();
         }
     } elseif ($payload['controller'] == "setting") {
@@ -44,10 +45,13 @@ if (isset($payload['controller']) && isset($payload['action'])) {
         }
     } elseif ($payload['controller'] == "user") {
         if ($payload['action'] == "register") {
+            $j['success'] = true;
             $j['res'] = $engine->user->register($data['email'], $data['password'], $data['name'], $data['address'], $data['phone'], $data['company']);
         }elseif ($payload['action'] == "login") {
+            $j['success'] = true;
             $j['res'] = $engine->user->login($data['email'], $data['password']);
         }elseif ($payload['action'] == "check") {
+            $j['success'] = true;
             $j['res'] = $engine->user->check();
         }elseif ($payload['action'] == "forgot") {
             $engine->user->forgotPassword($data['email']);
@@ -67,22 +71,29 @@ if (isset($payload['controller']) && isset($payload['action'])) {
     if($engine->user->islogin && $engine->user->id != 0) {
         if ($payload['controller'] == "user") {
             if ($payload['action'] == "logout") {
+                $j['success'] = true;
                 $j['res'] = $engine->user->logout();
             }elseif ($payload['action'] == "edit") {
+                $j['success'] = true;
                 $j['res'] = $engine->user->edit($data['id'], $data);
             }elseif ($payload['action'] == "get") {
+                $j['success'] = true;
                 $j['res'] = $engine->user->get();
             }elseif ($payload['action'] == "changePass") {
+                $j['success'] = true;
                 $j['res'] = $engine->user->changePassword($data['old'], $data['new'], $data['confirm']);
             }elseif ($payload['action'] == "confirmEmail") {
+                $j['success'] = true;
                 $j['res'] = $engine->user->confirmEmail();
             }elseif ($payload['action'] == "confirmPhone") {
+                $j['success'] = true;
                 if(isset($data['otp'])) {
                     $j['res'] = $engine->user->confirmPhone($data['phone'], $data['otp']);
                 }else{
                     $j['res'] = $engine->user->confirmPhone($data['phone']);
                 }
             }elseif ($payload['action'] == "newRefer") {
+                $j['success'] = true;
                 $j['res'] = $engine->user->newRefer();
             }
         } elseif ($payload['controller'] == "billing") {
@@ -110,10 +121,18 @@ if (isset($payload['controller']) && isset($payload['action'])) {
                     }
                 }
             } elseif ($payload['action'] == "history") {
+                $j['success'] = true;
                 if(isset($data['page'])) {
-                    $j['res'] = $engine->payment->history($data['page'], isset($data['all']) ? null : $engine->user->id);
+                    $j['res'] = $engine->payment->history($data['page'], $data['per_page'], isset($data['all']) ? null : $engine->user->id);
                 } else {
                     $j['res'] = $engine->payment->history();
+                }
+            } elseif ($payload['action'] == "invoice") {
+                $j['success'] = true;
+                if(isset($data['page'])) {
+                    $j['res'] = $engine->payment->history_invoice($data['page'], $data['per_page'], isset($data['all']) ? null : $engine->user->id);
+                } else {
+                    $j['res'] = $engine->payment->history_invoice();
                 }
             }
         } elseif ($payload['controller'] == "support") {
@@ -195,11 +214,14 @@ if (isset($payload['controller']) && isset($payload['action'])) {
             }
         }
     } else {
-        $j['success'] = false;
-        $j['error'] = [
-            'message' => 'Session timeout',
-            'code' => 403,
-        ];
+        if(!$j['success']) {
+            $j['success'] = false;
+            $j['error'] = [
+                'message' => 'Session timeout',
+                'code' => 403,
+            ];
+            $j['event'] = ["logout"];
+        }
     }
     
     ///////////////////////////// ADMIN /////////////////////////////
@@ -216,6 +238,11 @@ if (isset($payload['controller']) && isset($payload['action'])) {
             if ($payload['action'] == "get") {
                 $j['success'] = true;
                 $j['res'] = $engine->license->get_detail();
+            }
+        } elseif ($payload['controller'] == "payment") {
+            if ($payload['action'] == "summary") {
+                $j['success'] = true;
+                $j['res'] = $engine->payment->summary_month();
             }
         } elseif ($payload['controller'] == "package") {
             if ($payload['action'] == "add") {
@@ -264,8 +291,6 @@ if ($j['res'] === [] && $j['success'] == false && !isset($j['error'])) {
         'message' => 'Unknow request',
         'code' => 404,
     ];
-} else {
-    $j['success'] = true;
 }
 $j['time'] = microtime(true) * 10000;
 if($engine->user->admin) {

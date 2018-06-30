@@ -29,14 +29,23 @@ class PHUMIN_STUDIO_Host_Server {
             if(empty($host) || empty($ip) || empty($subnet) || empty($gateway)) {
                   return false;
             }
-            query("INSERT INTO `{$engine->config['prefix']}ip` (`host`, `ip`, `subnet`, `gateway`, `useby`) VALUES (?,?,?,?,?);", [$host, $ip, $subnet, $gateway, 0]);
+            $host_data = query("SELECT * FROM `{$engine->config['prefix']}xen_host` WHERE `id` = ?;", [$host])->fetch(PDO::FETCH_ASSOC);
+            $res = $engine->xenserver->ip_register($host_data, $ip);
+            if($res) {
+                  query("INSERT INTO `{$engine->config['prefix']}ip` (`host`, `ip`, `subnet`, `gateway`, `useby`) VALUES (?,?,?,?,?);", [$host, $ip, $subnet, $gateway, 0]);
+            }
             return $this->ip($host);
       }
 
       public function ip_remove($host, $id) {
             global $engine;
 
-            query("DELETE FROM `{$engine->config['prefix']}ip` WHERE `id` = ?;", [$id]);
+            $ip = query("SELECT * FROM `{$engine->config['prefix']}ip` WHERE `id` = ?;", [$id])->fetch(PDO::FETCH_ASSOC);
+            $host_data = query("SELECT * FROM `{$engine->config['prefix']}xen_host` WHERE `id` = ?;", [$ip['host']])->fetch(PDO::FETCH_ASSOC);
+            $res = $engine->xenserver->ip_remove($host_data, $ip['ip']);
+            if($res) {
+                  query("DELETE FROM `{$engine->config['prefix']}ip` WHERE `id` = ?;", [$id]);
+            }
             return $this->ip($host);
       }
 

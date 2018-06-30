@@ -27,6 +27,13 @@ $engine->template->bundleJS('apps');
         <meta charset="utf-8" />
         <meta name="description" content="<?php echo config('sitedesc');?>">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta property="og:title" content="<?php echo config('sitename');?>">
+        <meta property="og:description" content="<?php echo config('sitedesc');?>">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://studio.phumin.in.th/panel/">
+        <meta property="og:image" content="https://studio.phumin.in.th/promote/poster.jpg">
+        <meta property="og:image:alt" content="<?php echo config('sitedesc');?>">
+        <meta property="fb:app_id" content="411517232359653">
         <!-- ========== Favicon Ico ========== -->
         <link rel="apple-touch-icon" sizes="57x57" href="assets/favicon/apple-icon-57x57.png">
         <link rel="apple-touch-icon" sizes="60x60" href="assets/favicon/apple-icon-60x60.png">

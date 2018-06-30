@@ -142,7 +142,7 @@ class PHUMIN_STUDIO_VPS {
                   $data = [$engine->user->id, $package['id'], $promotion['id'], $ip['ip'], $type, $host['id'], $res['opaqueRef'], json_encode($template), $now, $expire, $now, 99, $promotion['promotion']['referer']];
                   query("INSERT INTO `{$engine->config['prefix']}vps` (`owner`, `package`, `promo_code`, `name`, `type`, `host`, `ref`, `template`, `created`, `expire`, `expanded`, `status`, `refer`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);", $data);
                   // Give credit to referer
-                  $refer_payout = $price * (1 - (config('refer_share') / 100));
+                  $refer_payout = $price * (config('refer_share') / 100);
                   $refer_id = $promotion['promotion']['referer'];
                   query("UPDATE `{$engine->config['prefix']}user` SET `credit` = `credit` + ? WHERE `id` = ?;", [$refer_payout, $refer_id]);
                   // Create payment to referer
@@ -159,6 +159,7 @@ class PHUMIN_STUDIO_VPS {
 
             // Invoice
             query("INSERT INTO `{$engine->config['prefix']}invoice` (`owner`, `owner_detail`, `product`, `date`) VALUES (?,?,?,?);", [$engine->user->id, json_encode([
+                  'id' => $engine->user->id,
                   'email' => $engine->user->email,
                   'name' => $engine->user->name,
                   'phone' => $engine->user->phone,
@@ -166,6 +167,7 @@ class PHUMIN_STUDIO_VPS {
                   'company' => $engine->user->company,
             ]), json_encode([
                   [
+                        "type" => "new",
                         "id" => $vps_id,
                         "name" => $ip['ip'],
                         "cpu" => $package['cpu'],
@@ -326,7 +328,7 @@ class PHUMIN_STUDIO_VPS {
 
                   if ($vps_raw['refer'] != 0) {
                         // Give credit to referer
-                        $refer_payout = $price * (1 - (config('refer_share') / 100));
+                        $refer_payout = $price * (config('refer_share') / 100);
                         $refer_id = $vps_raw['refer'];
                         query("UPDATE `{$engine->config['prefix']}user` SET `credit` = `credit` + ? WHERE `id` = ?;", [$refer_payout, $refer_id]);
                         // Create payment to referer
@@ -335,6 +337,7 @@ class PHUMIN_STUDIO_VPS {
 
                   // Invoice
                   query("INSERT INTO `{$engine->config['prefix']}invoice` (`owner`, `owner_detail`, `product`, `date`) VALUES (?,?,?,?);", [$user['id'], json_encode([
+                        'id' => $user['id'],
                         'email' => $user['email'],
                         'name' => $user['name'],
                         'phone' => $user['phone'],
@@ -342,6 +345,7 @@ class PHUMIN_STUDIO_VPS {
                         'company' => $user['company'],
                   ]), json_encode([
                         [
+                              "type" => "expand",
                               "id" => $vps['id'],
                               "name" => $vps['name'],
                               "cpu" => $vps['cpu'],

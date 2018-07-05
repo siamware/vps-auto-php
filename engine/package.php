@@ -31,35 +31,41 @@ class PHUMIN_STUDIO_Package {
                   $vs = query("SELECT
                   `p`.`cpu`,
                   `p`.`ram`,
-                  `p`.`disk`,
                   `v`.`host`,
                   `v`.`expire`,
                   `v`.`delete`
-                  FROM `{$engine->config['prefix']}vps` AS `v` JOIN `{$engine->config['prefix']}package` AS `p`
-                  ON `v`.`package` = `p`.`id`
+                  FROM `{$engine->config['prefix']}vps` AS `v` JOIN `{$engine->config['prefix']}xen_vm` AS `p`
+                  ON `v`.`ref` = `p`.`opaqueRef`
                   WHERE `v`.`host` = ?
                   ORDER BY `v`.`expire` ASC", [$h['id']])->fetchAll(PDO::FETCH_ASSOC);
-                  
+                  //var_dump($vs);
+
                   // Check current free resources
                   if($h['ram_free'] >= $package['ram'] * 1024 * 1024 * 1024) {
+                        //echo $package['name'] . ":{$h['ram_free']}," . ($package['ram'] * 1024 * 1024 * 1024);
                         $soon_time = -1;
                         break;
                   }
 
                   // Check soon free resources
+                  $soon_ram = 0;
                   foreach($vs as $v) {
-                        $h['ram_free'] += $v['ram'] * 1024 * 1024 * 1024;
-                        if($h['ram_free'] < $package['ram'] * 1024 * 1024 * 1024) {
-                              if($v['delete'] == "") {
-                                    $expire = $v['expire'] + config('keep_before_remove');
-                                    if($soon_time == -1 || $soon_time > $expire) {
-                                          $soon_time = $expire;
-                                    }
-                              }else{
-                                    if($soon_time == -1 || $soon_time > $v['delete']) {
-                                          $soon_time = $v['delete'];
-                                    }
-                              }
+                        $soon_ram += $v['ram'];// * 1024 * 1024 * 1024;
+
+                        if($v['delete'] == "") {
+                              $expire = $v['expire'] + config('keep_before_remove');
+                        }else{
+                              $expire = $v['delete'];
+                        }
+                        if($soon_time == -1 || $expire < $soon_time) {
+                              $soon_time = $expire;
+                        }
+
+                        if($h['ram_free'] + $soon_ram >= $package['ram'] * 1024 * 1024 * 1024) {
+                              //var_dump([$package['name'], $h['ram_free'], $soon_ram, $h['ram_free'] + $soon_ram, ">", $package['ram'] * 1024 * 1024 * 1024]);
+                              break 1;
+                        } else {
+                              $soon_time = $expire;
                         }
                   }
 
@@ -69,13 +75,11 @@ class PHUMIN_STUDIO_Package {
                         $v = $vs[0];
                         if($v['delete'] == "") {
                               $expire = $v['expire'] + config('keep_before_remove');
-                              if($soon_time == -1 || $soon_time > $expire) {
-                                    $soon_time = $expire;
-                              }
                         }else{
-                              if($soon_time == -1 || $soon_time > $v['delete']) {
-                                    $soon_time = $v['delete'];
-                              }
+                              $expire = $v['delete'];
+                        }
+                        if($soon_time == -1 || $soon_time > $expire) {
+                              $soon_time = $expire;
                         }
                   }
             }

@@ -455,7 +455,7 @@ function PHUMIN_STUDIO_HOSTING(callback) {
                             } else {
                                 if (this.$store.getters.host) {
                                     this.$store.getters.host.forEach(function (host) {
-                                        //console.log(host.ram_free, p.ram * 1024 * 1024 * 1024, host.ram_free > p.ram * 1024 * 1024 * 1024)
+                                        console.log(host.ram_free, p.ram * 1024 * 1024 * 1024, host.ram_free > p.ram * 1024 * 1024 * 1024)
                                         if (host.ram_free >= p.ram * 1024 * 1024 * 1024) {
                                             available = true;
                                         }
@@ -485,6 +485,13 @@ function PHUMIN_STUDIO_HOSTING(callback) {
                                     $self.$router.push({
                                         path: '/vps/' + res.last
                                     });
+
+                                    swal({
+                                        title: 'เปลี่ยนรหัสผ่านทันทีที่ได้รับเครื่อง',
+                                        text: 'เพื่อป้องกันการถูกผู้ไม่หวังแฮก',
+                                        type: 'warning',
+                                        confirmButtonText: 'รับทราบ',
+                                    })
                                 }
                             });
                         },
@@ -1695,7 +1702,7 @@ function PHUMIN_STUDIO_HOSTING(callback) {
                     },
                     methods: {
                         ram_format: function (amount) {
-                            return Math.round(amount / 1024 / 1024 / 1024);
+                            return (amount / 1024 / 1024 / 1024).toFixed(2);
                         },
                     },
                     created: function () {
@@ -1717,7 +1724,7 @@ function PHUMIN_STUDIO_HOSTING(callback) {
                     },
                     methods: {
                         ram_format: function (amount) {
-                            return Math.round(amount / 1024 / 1024 / 1024);
+                            return (amount / 1024 / 1024 / 1024).toFixed(2);
                         },
                     },
                     computed: {
@@ -1824,6 +1831,30 @@ function PHUMIN_STUDIO_HOSTING(callback) {
                             }
                             return host;
                         },
+                        ip_free: function () {
+                            if(this.ips == false) {
+                                return 0;
+                            } else {
+                                var n = 0;
+                                this.ips.forEach(function (e) {
+                                    if (e.useby == 0)
+                                        n++;
+                                })
+                                return n;
+                            }
+                        },
+                        ip_in_use: function () {
+                            if(this.ips == false) {
+                                return 0;
+                            } else {
+                                var n = 0;
+                                this.ips.forEach(function (e) {
+                                    if (e.useby != 0)
+                                        n++;
+                                })
+                                return n;
+                            }
+                        }
                     },
                     created: function () {
                         this.$store.commit('get_host');

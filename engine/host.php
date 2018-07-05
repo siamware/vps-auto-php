@@ -8,9 +8,11 @@ class PHUMIN_STUDIO_Host_Server {
             $r = [];
             
             if($engine->user->admin || $full) {
-                  $xen = query("SELECT `h`.*, `h`.`ram_total` - SUM(`v`.`ram`) as `ram_free`, 'a' as `type` FROM `{$engine->config['prefix']}xen_host` AS `h`, `{$engine->config['prefix']}xen_vm` AS `v` WHERE `h`.`id` = `v`.`server`")->fetchAll(PDO::FETCH_ASSOC);
-            }else{
-                  $xen = query("SELECT `h`.`id`, `h`.`cpu`, `h`.`ram_total` - SUM(`v`.`ram`) as `ram_free`, 'a' as `type` FROM `{$engine->config['prefix']}xen_host` AS `h`, `{$engine->config['prefix']}xen_vm` AS `v` WHERE `h`.`id` = `v`.`server`")->fetchAll(PDO::FETCH_ASSOC);
+                  $xen = query("SELECT `h`.`id`, `h`.`label`, `h`.`ip`, `h`.`cpu`, `h`.`ram_total`, `h`.`last_check`, `h`.`ram_total` - SUM(`v`.`ram`) - 6227702579 as `ram_free`, 'a' as `type` FROM `{$engine->config['prefix']}xen_host` AS `h`, `{$engine->config['prefix']}xen_vm` AS `v` WHERE `h`.`id` = `v`.`server`")->fetchAll(PDO::FETCH_ASSOC);
+                  //$xen = query("SELECT `h`.*, 'a' as `type` FROM `{$engine->config['prefix']}xen_host` AS `h`")->fetchAll(PDO::FETCH_ASSOC);
+            } else {
+                  $xen = query("SELECT `h`.`id`, `h`.`cpu`, `h`.`ram_total` - SUM(`v`.`ram`) - 6227702579 as `ram_free`, 'a' as `type` FROM `{$engine->config['prefix']}xen_host` AS `h`, `{$engine->config['prefix']}xen_vm` AS `v` WHERE `h`.`id` = `v`.`server`")->fetchAll(PDO::FETCH_ASSOC);
+                  //$xen = query("SELECT `h`.`id`, `h`.`cpu`, `h`.`ram_free`, 'a' as `type` FROM `{$engine->config['prefix']}xen_host` AS `h`")->fetchAll(PDO::FETCH_ASSOC);
             }
 
             $r = array_merge($xen, $r);

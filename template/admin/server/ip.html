@@ -68,11 +68,22 @@
                                     <table class="table">
                                           <thead>
                                                 <tr>
-                                                      <th>IP</th>
-                                                      <th>Subnetmask</th>
-                                                      <th>Gateway</th>
-                                                      <th>สถานะ</th>
-                                                      <th></th>
+                                                      <th class="align-middle">
+                                                            IP ({{ ips ? ips.length : 0 }})
+                                                      </th>
+                                                      <th class="align-middle">
+                                                            Subnet
+                                                      </th>
+                                                      <th class="align-middle">
+                                                            Gateway
+                                                      </th>
+                                                      <th class="align-middle">
+                                                            สถานะ<br>
+                                                            (ว่าง {{ ip_free }}, ใช้ {{ ip_in_use }})
+                                                      </th>
+                                                      <th class="align-middle">
+
+                                                      </th>
                                                 </tr>
                                           </thead>
                                           <tbody>

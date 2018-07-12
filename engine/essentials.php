@@ -78,6 +78,9 @@ function send_mail($to, $subject, $option) {
         $mail->isHTML(true);
         $mail->CharSet = 'utf-8';
         $mail->Subject = $subject;
+        
+        //Important
+        $mail->Priority = 1; // High (1 = High, 3 = Normal, 5 = Low)
 
         //Body
         $template = file_get_contents(__DIR__ . "/../template/email/{$option['template']}.html");

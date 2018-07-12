@@ -27,7 +27,6 @@ class PHUMIN_STUDIO_Package {
             $host = $engine->host->get(true);
             $soon_time = -1;
             foreach($host as $h) {
-
                   $vs = query("SELECT
                   `p`.`cpu`,
                   `p`.`ram`,
@@ -44,7 +43,22 @@ class PHUMIN_STUDIO_Package {
                   if($h['ram_free'] >= $package['ram'] * 1024 * 1024 * 1024) {
                         //echo $package['name'] . ":{$h['ram_free']}," . ($package['ram'] * 1024 * 1024 * 1024);
                         $soon_time = -1;
-                        break;
+                  }
+
+                  // Check fastest ip that will be available
+                  $ip_available = query("SELECT * FROM `{$engine->config['prefix']}ip` WHERE `host` = ? AND `useby` = ?", [$h['id'], 0])->rowCount();
+                  
+                  if($ip_available == 0) {
+                        $v = $vs[0];
+                        if($v['delete'] == "") {
+                              $expire = $v['expire'] + config('keep_before_remove');
+                        }else{
+                              $expire = $v['delete'];
+                        }
+                        if($soon_time == -1 || $expire < $soon_time) {
+                              $soon_time = $expire;
+                              //var_dump([$package, $soon_time]);
+                        }
                   }
 
                   // Check soon free resources
@@ -57,29 +71,13 @@ class PHUMIN_STUDIO_Package {
                         }else{
                               $expire = $v['delete'];
                         }
-                        if($soon_time == -1 || $expire < $soon_time) {
-                              $soon_time = $expire;
-                        }
 
                         if($h['ram_free'] + $soon_ram >= $package['ram'] * 1024 * 1024 * 1024) {
                               //var_dump([$package['name'], $h['ram_free'], $soon_ram, $h['ram_free'] + $soon_ram, ">", $package['ram'] * 1024 * 1024 * 1024]);
-                              break 1;
                         } else {
-                              $soon_time = $expire;
-                        }
-                  }
-
-                  // Check fastest ip that will be available
-                  $ip_available = query("SELECT * FROM `{$engine->config['prefix']}ip` WHERE `host` = ? AND `useby` = ?", [$h['id'], 0])->rowCount();
-                  if($ip_available == 0) {
-                        $v = $vs[0];
-                        if($v['delete'] == "") {
-                              $expire = $v['expire'] + config('keep_before_remove');
-                        }else{
-                              $expire = $v['delete'];
-                        }
-                        if($soon_time == -1 || $soon_time > $expire) {
-                              $soon_time = $expire;
+                              if($soon_time == -1 || $expire < $soon_time) {
+                                    $soon_time = $expire;
+                              }
                         }
                   }
             }

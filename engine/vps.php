@@ -109,9 +109,7 @@ class PHUMIN_STUDIO_VPS {
             if($engine->user->credit < $price) {
                   return false;
             }
-            // Take credit
-            query("UPDATE `{$engine->config['prefix']}user` SET `credit` = `credit` - ? WHERE `id` = ?;", [$price, $engine->user->id]);
-
+            
             $ip = [];
             if($host_type == "a") {
                   $type = "xen";
@@ -121,6 +119,7 @@ class PHUMIN_STUDIO_VPS {
             } else {
                   return false;
             }
+            
             // Take ip
             query("UPDATE `{$engine->config['prefix']}ip` SET `useby` = ? WHERE `id` = ?;", [-1, $ip['id']]);
 
@@ -135,7 +134,10 @@ class PHUMIN_STUDIO_VPS {
                   $_m = $_m - (3600 * 7); // ลบออก 7 ชม ให้กลายเป็นเวลาตาม UTC
                   $expire = $now + ($package['time'] * 86400) + $_m - 1; // ลบ 1 เพื่อให้เวลาเป็น 23:59:59
             }
-            
+
+            // Take credit
+            query("UPDATE `{$engine->config['prefix']}user` SET `credit` = `credit` - ? WHERE `id` = ?;", [$price, $engine->user->id]);
+
             // Check that create vps with refer or not
             if($promotion['type'] == "refer") {
                   // Refer

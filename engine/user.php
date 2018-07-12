@@ -480,4 +480,14 @@ class PHUMIN_STUDIO_User {
         query("UPDATE `{$engine->config['prefix']}user` SET `refer_code` = ? WHERE `id` = ?;", [$code, $this->id]);
         return ["success" => true, "data" => $this->get()];
     }
+
+    public function getReferBalance($user = null) {
+        global $engine;
+
+        if($user === null) {
+
+        } else {
+            
+        }
+    }
 }

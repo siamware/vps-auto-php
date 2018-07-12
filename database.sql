@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: May 27, 2018 at 01:12 PM
+-- Generation Time: Jul 12, 2018 at 06:54 PM
 -- Server version: 10.1.25-MariaDB
 -- PHP Version: 5.6.31
 
@@ -11,6 +11,12 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Database: `vps`
@@ -70,32 +76,45 @@ INSERT INTO `tb_config` (`id`, `name`, `value`) VALUES
 (2, 'sitename', 'Phumin Studio : Cloud'),
 (3, 'register_credit', '0'),
 (4, 'worker_updating', '0'),
-(5, 'current_version', '0.0.1'),
-(6, 'auto_choose_server', '1'),
+(5, 'current_version', '0.0.9'),
+(6, 'auto_choose_server', '0'),
 (7, 'keep_before_remove', '86400'),
 (8, 'sitedesc', 'Phumin Studio บริการ Hosting และ VPS สำหรับเซิฟเวอร์เกม และธุรกิจ'),
 (9, 'license_key', ''),
 (10, 'truemoney_gateway', 'tmpay'),
-(11, 'truemoney_tmpay_merchant', 'ZP15062116'),
-(12, 'truemoney_tmpay_50', '50'),
-(13, 'truemoney_tmpay_90', '90'),
-(14, 'truemoney_tmpay_150', '150'),
-(15, 'truemoney_tmpay_300', '300'),
-(16, 'truemoney_tmpay_500', '500'),
-(17, 'truemoney_tmpay_1000', '1000'),
-(18, 'truewallet_phone', ''),
-(19, 'truewallet_pin', ''),
-(20, 'truewallet_range', '{\"0\": 1, \"1000\": 1.2}'),
-(21, 'bank_kbank', '{\"user\":\"\",\"pass\":\"\",\"account\":\"\"}');
-(22, 'bank_kbank_range', '{\"0\": 1}'),
-(23, 'round_day', '1'),
-(24, 'time_before_remove', '86400'),
-(25, 'sms_notification', '0'),
-(26, 'sms_gateway', 'thsms'),
-(27, 'sms_config_thaibulk', '{\"user\": \"\", \"pass\": \"\", \"sender\": \"\"}'),
-(28, 'sms_config_thsms', '{\"user\": \"\", \"pass\": \"\", \"sender\": \"\"}'),
-(29, 'sms_config_molinksms', '{}'),
-(30, 'refer_share', '10'),
+(11, 'truemoney_tmpay_merchant', ''),
+(12, 'truewallet_phone', ''),
+(13, 'truewallet_pin', ''),
+(14, 'truemoney_tmpay_50', '50'),
+(15, 'truemoney_tmpay_90', '90'),
+(16, 'truemoney_tmpay_150', '150'),
+(17, 'truemoney_tmpay_300', '300'),
+(18, 'truemoney_tmpay_500', '500'),
+(19, 'truemoney_tmpay_1000', '1000'),
+(20, 'truewallet_range', '{\"50\": 1, \"300\": 1.5,\"1000\": 2}'),
+(21, 'round_day', '1'),
+(22, 'time_before_remove', '86400'),
+(23, 'sms_notification', '0'),
+(24, 'sms_gateway', 'molink'),
+(25, 'sms_config_thaibulk', '{\"user\":\"\",\"pass\":\"\",\"sender\":\"\"}'),
+(26, 'sms_config_thsms', '{\"user\":\"\",\"pass\":\"\",\"sender\":\"\"}'),
+(27, 'sms_config_molinksms', '{\"user\": \"\", \"pass\": \"\", \"sender\": \"\"}'),
+(28, 'bank_kbank', '{\"user\":\"\",\"pass\":\"\",\"account\":\"\"}'),
+(29, 'refer_share', '10');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tb_invoice`
+--
+
+CREATE TABLE `tb_invoice` (
+  `id` int(11) NOT NULL,
+  `owner` int(11) NOT NULL,
+  `owner_detail` longtext CHARACTER SET utf8 NOT NULL,
+  `product` longtext CHARACTER SET utf8 NOT NULL,
+  `date` varchar(255) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -146,6 +165,21 @@ CREATE TABLE `tb_payment` (
   `debug` longtext NOT NULL,
   `status` varchar(255) NOT NULL,
   `time` varchar(255) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tb_promo_code`
+--
+
+CREATE TABLE `tb_promo_code` (
+  `id` int(11) NOT NULL,
+  `code` varchar(255) NOT NULL,
+  `type` varchar(255) NOT NULL,
+  `condition` longtext NOT NULL COMMENT 'เงื่อนไขของคนที่จะใช้งานได้',
+  `promotion` longtext NOT NULL,
+  `status` int(11) NOT NULL COMMENT '0 = ใช้งานได้, 1 = ใช้งานไม่ได้'
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -244,7 +278,8 @@ CREATE TABLE `tb_user` (
   `verify_email` varchar(255) NOT NULL DEFAULT '0',
   `verify_email_code` varchar(255) NOT NULL,
   `verify_phone` varchar(255) NOT NULL DEFAULT '0',
-  `verify_phone_code` varchar(255) NOT NULL
+  `verify_phone_code` varchar(255) NOT NULL,
+  `refer_code` varchar(255) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -257,6 +292,8 @@ CREATE TABLE `tb_vps` (
   `id` int(11) NOT NULL,
   `owner` int(11) NOT NULL,
   `package` int(11) NOT NULL,
+  `promo_code` int(11) NOT NULL,
+  `refer` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `type` varchar(255) NOT NULL,
   `host` int(11) NOT NULL,
@@ -299,9 +336,10 @@ CREATE TABLE `tb_xen_template` (
   `opaqueRef` varchar(255) NOT NULL,
   `uuid` varchar(255) NOT NULL,
   `name` varchar(255) CHARACTER SET utf8 NOT NULL,
-  `os` varchar(255) NOT NULL,
+  `os` varchar(255) NOT NULL COMMENT 'window, ubuntu, centos',
   `cpu` int(11) NOT NULL,
-  `ram` bigint(20) NOT NULL
+  `ram` bigint(20) NOT NULL,
+  `visible` int(11) NOT NULL DEFAULT '1'
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -393,6 +431,12 @@ ALTER TABLE `tb_config`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `tb_invoice`
+--
+ALTER TABLE `tb_invoice`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `tb_ip`
 --
 ALTER TABLE `tb_ip`
@@ -408,6 +452,12 @@ ALTER TABLE `tb_package`
 -- Indexes for table `tb_payment`
 --
 ALTER TABLE `tb_payment`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `tb_promo_code`
+--
+ALTER TABLE `tb_promo_code`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -501,17 +551,22 @@ ALTER TABLE `error_js`
 -- AUTO_INCREMENT for table `error_php`
 --
 ALTER TABLE `error_php`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=212;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT for table `tb_config`
 --
 ALTER TABLE `tb_config`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+--
+-- AUTO_INCREMENT for table `tb_invoice`
+--
+ALTER TABLE `tb_invoice`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 --
 -- AUTO_INCREMENT for table `tb_ip`
 --
 ALTER TABLE `tb_ip`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 --
 -- AUTO_INCREMENT for table `tb_package`
 --
@@ -521,7 +576,12 @@ ALTER TABLE `tb_package`
 -- AUTO_INCREMENT for table `tb_payment`
 --
 ALTER TABLE `tb_payment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=94;
+--
+-- AUTO_INCREMENT for table `tb_promo_code`
+--
+ALTER TABLE `tb_promo_code`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 --
 -- AUTO_INCREMENT for table `tb_statement_kbank`
 --
@@ -551,12 +611,12 @@ ALTER TABLE `tb_token_resetpass`
 -- AUTO_INCREMENT for table `tb_user`
 --
 ALTER TABLE `tb_user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
 --
 -- AUTO_INCREMENT for table `tb_vps`
 --
 ALTER TABLE `tb_vps`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 --
 -- AUTO_INCREMENT for table `tb_xen_host`
 --
@@ -566,24 +626,28 @@ ALTER TABLE `tb_xen_host`
 -- AUTO_INCREMENT for table `tb_xen_template`
 --
 ALTER TABLE `tb_xen_template`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=111;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=215;
 --
 -- AUTO_INCREMENT for table `tb_xen_vbd`
 --
 ALTER TABLE `tb_xen_vbd`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=253;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=527;
 --
 -- AUTO_INCREMENT for table `tb_xen_vdi`
 --
 ALTER TABLE `tb_xen_vdi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=239;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=484;
 --
 -- AUTO_INCREMENT for table `tb_xen_vif`
 --
 ALTER TABLE `tb_xen_vif`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=145;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=296;
 --
 -- AUTO_INCREMENT for table `tb_xen_vm`
 --
 ALTER TABLE `tb_xen_vm`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=114;COMMIT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=243;COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

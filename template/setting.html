@@ -167,7 +167,7 @@
                               </div>
                         </div>
                         <!-- row -->
-                        <div>
+                        <div v-if="$store.getters.setting.sms_notification == 1">
                               <hr>
                               <div class="row row-xs" v-if="$store.getters.user.verify_phone">
                                     <div class="col-4 tx-success">

@@ -10,9 +10,8 @@ class PHUMIN_STUDIO_Setting {
                   'sitename' => config('sitename'),
                   'sitedesc' => config('sitedesc'),
                   'auto_choose_server' => config('auto_choose_server'),
-                  'keep_before_remove' => config('keep_before_remove'),
-                  'round_day' => config('round_day'),
                   'time_before_remove' => config('time_before_remove'),
+                  'round_day' => config('round_day'),
                   'sms_notification' => config('sms_notification'),
                   'refer_share' => config('refer_share'),
             ];

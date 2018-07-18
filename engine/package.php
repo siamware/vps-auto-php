@@ -51,7 +51,7 @@ class PHUMIN_STUDIO_Package {
                   if($ip_available == 0) {
                         $v = $vs[0];
                         if($v['delete'] == "") {
-                              $expire = $v['expire'] + config('keep_before_remove');
+                              $expire = $v['expire'] + config('time_before_remove');
                         }else{
                               $expire = $v['delete'];
                         }
@@ -67,7 +67,7 @@ class PHUMIN_STUDIO_Package {
                         $soon_ram += $v['ram'];// * 1024 * 1024 * 1024;
 
                         if($v['delete'] == "") {
-                              $expire = $v['expire'] + config('keep_before_remove');
+                              $expire = $v['expire'] + config('time_before_remove');
                         }else{
                               $expire = $v['delete'];
                         }

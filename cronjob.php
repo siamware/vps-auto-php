@@ -23,7 +23,7 @@ foreach($expiring as $vm) {
                         "template" => "button",
                         "head" => "VPS {$vm['name']} จะหมดอายุใน 7 วัน",
                         "description" => "หากหมดอายุการใช้งาน คุณจะมีเวลา 12 ชั่วโมงก่อนที่ข้อมูลจะถูกลบถาวร<br>หากคุณต้องการใช้งานต่อกรุณาอายุการใช้งานด้วยตนเองหรือเปิดใช้งานระบบต่ออายุอัตโนมัติ<br><font color='red'>หากครบกำหนดแล้วยังไม่มีการชำระเงิน ระบบจะทำการระงับการใช้งาน VPS อัตโนมัติ</font>",
-                        "btn-link" => "https://studio.phumin.in.th/panel/#/billing",
+                        "btn-link" => config('url') . "/#/billing",
                         "btn-text" => "ชำระเงิน",
                   ]);
                   query("UPDATE `{$engine->config['prefix']}vps` SET `notif` = ?  WHERE `id` = ?;", [1, $vm['id']]);
@@ -44,7 +44,7 @@ foreach($expiring as $vm) {
                               "template" => "button",
                               "head" => "VPS {$vm['name']} จะหมดอายุใน 7 วัน",
                               "description" => "ระบบไม่สามารถต่ออายุอัตโนมัติให้คุณได้เนื่องจากยอดเงินในบัญชีไม่เพียงพอ<br>หากคุณต้องการใช้งานต่อกรุณาเติมเงินเข้าบัญชีผู้ใช้ของคุณ<br><font color='red'>หากครบกำหนดแล้วยังไม่มีการชำระเงิน ระบบจะทำการระงับการใช้งาน VPS อัตโนมัติ</font>",
-                              "btn-link" => "https://studio.phumin.in.th/panel/#/billing",
+                              "btn-link" => config('url') . "/#/billing",
                               "btn-text" => "ชำระเงิน",
                         ]);
                         query("UPDATE `{$engine->config['prefix']}vps` SET `notif` = ?  WHERE `id` = ?;", [1, $vm['id']]);
@@ -69,7 +69,7 @@ foreach($expiring as $vm) {
                         "template" => "button",
                         "head" => "VPS {$vm['name']} จะหมดอายุใน 3 วัน",
                         "description" => "หากหมดอายุการใช้งาน คุณจะมีเวลา 12 ชั่วโมงก่อนที่ข้อมูลจะถูกลบถาวร<br>หากคุณต้องการใช้งานต่อกรุณาอายุการใช้งานด้วยตนเองหรือเปิดใช้งานระบบต่ออายุอัตโนมัติ<br><font color='red'>หากครบกำหนดแล้วยังไม่มีการชำระเงิน ระบบจะทำการระงับการใช้งาน VPS อัตโนมัติ</font>",
-                        "btn-link" => "https://studio.phumin.in.th/panel/#/billing",
+                        "btn-link" => config('url') . "/#/billing",
                         "btn-text" => "ชำระเงิน",
                   ]);
                   query("UPDATE `{$engine->config['prefix']}vps` SET `notif` = ?  WHERE `id` = ?;", [2, $vm['id']]);
@@ -90,7 +90,7 @@ foreach($expiring as $vm) {
                               "template" => "button",
                               "head" => "VPS {$vm['name']} จะหมดอายุใน 3 วัน",
                               "description" => "ระบบไม่สามารถต่ออายุอัตโนมัติให้คุณได้เนื่องจากยอดเงินในบัญชีไม่เพียงพอ<br>หากคุณต้องการใช้งานต่อกรุณาเติมเงินเข้าบัญชีผู้ใช้ของคุณ<br><font color='red'>หากครบกำหนดแล้วยังไม่มีการชำระเงิน ระบบจะทำการระงับการใช้งาน VPS อัตโนมัติ</font>",
-                              "btn-link" => "https://studio.phumin.in.th/panel/#/billing",
+                              "btn-link" => config('url') . "/#/billing",
                               "btn-text" => "ชำระเงิน",
                         ]);
                         query("UPDATE `{$engine->config['prefix']}vps` SET `notif` = ?  WHERE `id` = ?;", [2, $vm['id']]);
@@ -118,7 +118,7 @@ foreach($expiring as $vm) {
                         "template" => "button",
                         "head" => "VPS {$vm['name']} จะหมดอายุใน 1 วัน",
                         "description" => "หากหมดอายุการใช้งาน คุณจะมีเวลา 12 ชั่วโมงก่อนที่ข้อมูลจะถูกลบถาวร<br>หากคุณต้องการใช้งานต่อกรุณาอายุการใช้งานด้วยตนเองหรือเปิดใช้งานระบบต่ออายุอัตโนมัติ<br><font color='red'>หากครบกำหนดแล้วยังไม่มีการชำระเงิน ระบบจะทำการระงับการใช้งาน VPS อัตโนมัติ</font>",
-                        "btn-link" => "https://studio.phumin.in.th/panel/#/billing",
+                        "btn-link" => config('url') . "/#/billing",
                         "btn-text" => "ชำระเงิน",
                   ]);
                   query("UPDATE `{$engine->config['prefix']}vps` SET `notif` = ?  WHERE `id` = ?;", [3, $vm['id']]);
@@ -142,7 +142,7 @@ foreach($expiring as $vm) {
                               "template" => "button",
                               "head" => "VPS {$vm['name']} จะหมดอายุใน 1 วัน",
                               "description" => "ระบบไม่สามารถต่ออายุอัตโนมัติให้คุณได้เนื่องจากยอดเงินในบัญชีไม่เพียงพอ<br>หากคุณต้องการใช้งานต่อกรุณาเติมเงินเข้าบัญชีผู้ใช้ของคุณ<br><font color='red'>หากครบกำหนดแล้วยังไม่มีการชำระเงิน ระบบจะทำการระงับการใช้งาน VPS อัตโนมัติ</font>",
-                              "btn-link" => "https://studio.phumin.in.th/panel/#/billing",
+                              "btn-link" => config('url') . "/#/billing",
                               "btn-text" => "ชำระเงิน",
                         ]);
                         query("UPDATE `{$engine->config['prefix']}vps` SET `notif` = ?  WHERE `id` = ?;", [3, $vm['id']]);
@@ -167,7 +167,7 @@ foreach($expiring as $vm) {
                         "template" => "button",
                         "head" => "VPS {$vm['name']} จะหมดอายุใน 12 ชั่วโมง",
                         "description" => "หากหมดอายุการใช้งาน คุณจะมีเวลา 12 ชั่วโมงก่อนที่ข้อมูลจะถูกลบถาวร<br>หากคุณต้องการใช้งานต่อกรุณาอายุการใช้งานด้วยตนเองหรือเปิดใช้งานระบบต่ออายุอัตโนมัติ<br><font color='red'>หากครบกำหนดแล้วยังไม่มีการชำระเงิน ระบบจะทำการระงับการใช้งาน VPS อัตโนมัติ</font>",
-                        "btn-link" => "https://studio.phumin.in.th/panel/#/billing",
+                        "btn-link" => config('url') . "/#/billing",
                         "btn-text" => "ชำระเงิน",
                   ]);
                   query("UPDATE `{$engine->config['prefix']}vps` SET `notif` = ?  WHERE `id` = ?;", [4, $vm['id']]);
@@ -188,7 +188,7 @@ foreach($expiring as $vm) {
                               "template" => "button",
                               "head" => "VPS {$vm['name']} จะหมดอายุใน 12 ชั่วโมง",
                               "description" => "ระบบไม่สามารถต่ออายุอัตโนมัติให้คุณได้เนื่องจากยอดเงินในบัญชีไม่เพียงพอ<br>หากคุณต้องการใช้งานต่อกรุณาเติมเงินเข้าบัญชีผู้ใช้ของคุณ<br><font color='red'>หากครบกำหนดแล้วยังไม่มีการชำระเงิน ระบบจะทำการระงับการใช้งาน VPS อัตโนมัติ</font>",
-                              "btn-link" => "https://studio.phumin.in.th/panel/#/billing",
+                              "btn-link" => config('url') . "/#/billing",
                               "btn-text" => "ชำระเงิน",
                         ]);
                         query("UPDATE `{$engine->config['prefix']}vps` SET `notif` = ?  WHERE `id` = ?;", [4, $vm['id']]);
@@ -215,7 +215,7 @@ foreach($expiring as $vm) {
                   "template" => "button",
                   "head" => "VPS {$vm['name']} หมดอายุแล้ว",
                   "description" => "คุณจะมีเวลา 12 ชั่วโมงก่อนที่ข้อมูลจะถูกลบถาวร<br>หากคุณต้องการใช้งานต่อกรุณาอายุการใช้งานด้วยตนเองหรือเปิดใช้งานระบบต่ออายุอัตโนมัติ<br><font color='red'>หากครบกำหนดแล้วยังไม่มีการชำระเงิน ระบบจะทำการระงับการใช้งาน VPS อัตโนมัติ</font>",
-                  "btn-link" => "https://studio.phumin.in.th/panel/#/billing",
+                  "btn-link" => config('url') . "/#/billing",
                   "btn-text" => "ชำระเงิน",
             ]);
             query("UPDATE `{$engine->config['prefix']}vps` SET `delete` = `expire` + ?, `status` = ?, `notif` = ?  WHERE `id` = ?;", [config('time_before_remove'), 1, 5, $vm['id']]);
@@ -239,7 +239,7 @@ foreach($expiring as $vm) {
                         "template" => "button",
                         "head" => "VPS {$vm['name']} หมดอายุแล้ว",
                         "description" => "ระบบไม่สามารถต่ออายุอัตโนมัติให้คุณได้เนื่องจากยอดเงินในบัญชีไม่เพียงพอ<br>หากคุณต้องการใช้งานต่อกรุณาเติมเงินและสั่งชำระด้วยตนเอง<br><font color='red'>หากไม่มีการชำระเงินภายใน 24 ชั่วโมง ระบบจะทำการลบข้อมูลอย่างถาวร</font>",
-                        "btn-link" => "https://studio.phumin.in.th/panel/#/billing",
+                        "btn-link" => config('url') . "/#/billing",
                         "btn-text" => "ชำระเงิน",
                   ]);
                   $vps = $engine->vps->get($vm['id']);

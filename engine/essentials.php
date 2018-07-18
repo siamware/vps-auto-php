@@ -58,20 +58,22 @@ function close_connection() {
 function send_mail($to, $subject, $option) {
     global $engine;
 
+    $smtp_config = json_decode(config('smtp_config'), true);
+    $email_config = json_decode(config('email_config'), true);
 
     $mail = new PHPMailer(true);
     try {
         //Server settings
         $mail->isSMTP();                                        // Set mailer to use SMTP
-        $mail->Host = 'hosting.phumin.in.th';                   // Specify main and backup SMTP servers
+        $mail->Host = $smtp_config['host'];                   // Specify main and backup SMTP servers
         $mail->SMTPAuth = true;                                 // Enable SMTP authentication
-        $mail->Username = 'admin';                              // SMTP username
-        $mail->Password = 'f&S&52Ly@%WW';                       // SMTP password
+        $mail->Username = $smtp_config['username'];                              // SMTP username
+        $mail->Password = $smtp_config['password'];                       // SMTP password
         $mail->SMTPSecure = 'tls';                              // Enable TLS encryption, `ssl` also accepted
-        $mail->Port = 587;                                      // TCP port to connect to
+        $mail->Port = $smtp_config['port'];                                      // TCP port to connect to
     
         //Recipients
-        $mail->setFrom('noreply@phumin.in.th', 'Phumin Studio');
+        $mail->setFrom($email_config['email'], $email_config['name']);
         $mail->addAddress($to);
 
         //Content

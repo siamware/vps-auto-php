@@ -57,20 +57,13 @@
                                           <font class="tx-danger">{{ package.price }}</font> บาท ระยะเวลา
                                           <font class="tx-danger">{{ package.time }}</font> วัน
                                     </span>
-                                    <button v-if="!available_package(package)" class="btn btn-sm btn-danger mt-2" disabled>
-                                          <span v-if="package.soon == null">เครื่องไม่ว่างให้บริการ</span>
-                                          <countdown v-else :finish="package.soon" prefix="ให้บริการได้เร็วที่สุดใน"></countdown>
-                                    </button>
-                                    <button v-else-if="available_package(package) && parseFloat($store.getters.user.credit) >= parseFloat(package.price)" class="btn btn-sm btn-primary mt-2"
+                                    <button v-if="available_package(package)" class="btn btn-sm btn-primary mt-2"
                                           @click="select_package(package)">
                                           เลือก
                                     </button>
-                                    <button v-else-if="available_package(package) && parseFloat($store.getters.user.credit) < parseFloat(package.price)" class="btn btn-sm btn-warning mt-2"
-                                          @click="$router.push({name: 'billing'})">
-                                          เงินในบัญชีไม่เพียงพอ กรุณาเติมเงิน
-                                    </button>
                                     <button v-else class="btn btn-sm btn-danger mt-2" disabled>
-                                          ไม่พร้อมบริการ
+                                          <span v-if="package.soon == null || package.soon == -1">เครื่องไม่ว่างให้บริการ (เต็ม)</span>
+                                          <countdown v-else :finish="package.soon" prefix="ให้บริการได้เร็วที่สุดใน"></countdown>
                                     </button>
                               </div>
                         </div>
@@ -193,7 +186,7 @@
                                     <hr>
                               </div>
                         </div>
-                        <button v-if="parseFloat($store.getters.user.credit) >= parseFloat(package_select.price)" class="btn btn-primary btn-block"
+                        <button v-if="parseFloat($store.getters.user.credit) >= parseFloat(price)" class="btn btn-primary btn-block"
                               @click="create">
                               <i class="fa fa-shopping-cart"></i>
                               สั่งซื้อ ({{ price }} บาท)

@@ -2068,7 +2068,9 @@ function PHUMIN_STUDIO_HOSTING(callback) {
                                     if (res.success) {
                                         $self.message_mode = "success";
                                         $self.message = "เชื่อมต่อสำเร็จ";
-                                        $self.step = 2;
+                                        $self.$router.push({
+                                            name: 'admin-server-list'
+                                        });
                                     } else {
                                         if (typeof res.error.code == "undefined") {
                                             code = res.error[0];

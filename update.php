@@ -56,3 +56,10 @@ if(version_number(config('current_version')) <= version_number("0.0.8")) {
       query("ALTER TABLE `tb_user` ADD `refer_code` VARCHAR(255) NOT NULL AFTER `verify_phone_code`;");
       save_config('current_version', '0.0.9');
 }
+
+if(version_number(config('current_version')) <= version_number("0.0.9")) {
+      query("INSERT INTO `tb_config` (`id`, `name`, `value`) VALUES (NULL, 'smtp_config', '{\"host\":\"\",\"port\":\"587\",\"username\":\"\",\"password\":\"\"}');");
+      query("INSERT INTO `tb_config` (`id`, `name`, `value`) VALUES (NULL, 'email_config', '{\"email\":\"\",\"name\":\"\"}');");
+      query("INSERT INTO `tb_config` (`id`, `name`, `value`) VALUES (NULL, 'url', 'https://studio.phumin.in.th/panel');");
+      save_config('current_version', '0.0.10');
+}

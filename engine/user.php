@@ -281,7 +281,7 @@ class PHUMIN_STUDIO_User {
                 "template" => "button",
                 "head" => "คุณได้ร้องขอลิงค์รีเซ็ตรหัสผ่าน",
                 "description" => "หากคุณไม่ได้เป็นคนร้องขอ คุณสามารถเพิกเฉยกับอีเมล์ฉบับนี้ได้<br>เมื่อคลิกลิงค์แล้ว คุณสามารถต้องรหัสผ่านใหม่และใช้งานได้ทันที<br>ลิงค์นี้มีอายุการใช้งาน 15 นาทีเท่านั้น",
-                "btn-link" => "https://studio.phumin.in.th/panel/#/reset-password/{$token}",
+                "btn-link" => config('url') . "/#/reset-password/{$token}",
                 "btn-text" => "รีเซ็ตรหัสผ่าน",
             ]);
         }
@@ -333,7 +333,7 @@ class PHUMIN_STUDIO_User {
                 "template" => "button",
                 "head" => "ยืนยัน Email",
                 "description" => "คลิกที่ปุ่มเพื่อยืนยัน Email",
-                "btn-link" => "https://studio.phumin.in.th/panel/?action=confirmEmail&token={$token}",
+                "btn-link" => config('url') . "/?action=confirmEmail&token={$token}",
                 "btn-text" => "ยืนยัน Email",
             ]);
             return true;

@@ -36,7 +36,7 @@ require_once __DIR__ . '/code.php';
 // Library
 
 // Application setting
-$config['version'] = '0.0.9';
+$config['version'] = '0.0.10';
 $config['engine_number'] = 'PHUMIN-STUDIO-CLOUD'; // Important! Don't edit this line
 
 // Engine start

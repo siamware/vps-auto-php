@@ -161,7 +161,7 @@ class PHUMIN_STUDIO_Payment {
                         return [
                               'success' => true,
                               'data' => [
-                                    'amount' => $amount * 0.85,
+                                    'amount' => $transaction['amount'] * 0.85,
                                     'user' => $engine->user->get($transaction['owner']),
                               ],
                         ];
